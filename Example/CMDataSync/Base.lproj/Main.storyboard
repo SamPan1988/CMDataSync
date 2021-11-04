@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="whP-gf-Uak">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="gak-4Y-iMP">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -20,12 +18,91 @@
                     <view key="view" contentMode="scaleToFill" id="TpU-gO-2f1">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vo9-Q2-d8X">
+                                <rect key="frame" x="66" y="74" width="243" height="125"/>
+                                <color key="backgroundColor" red="0.27450980392156865" green="0.71372549019607845" blue="0.58823529411764708" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="125" id="5rU-1E-k9i"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="sync_send_icon" title="发送数据">
+                                    <fontDescription key="titleFontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="20"/>
+                                    <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="sendBtnAction:" destination="whP-gf-Uak" eventType="touchUpInside" id="d6n-SO-rJS"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="01g-CT-tH0">
+                                <rect key="frame" x="66" y="239" width="243" height="125"/>
+                                <color key="backgroundColor" red="0.36862745098039218" green="0.68235294117647061" blue="0.8901960784313725" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="125" id="8Lf-ey-E9H"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="sync_recive_icon" title="接收数据">
+                                    <fontDescription key="titleFontDescription" name="PingFangSC-Regular" family="PingFang SC" pointSize="20"/>
+                                    <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="revBtnAction:" destination="whP-gf-Uak" eventType="touchUpInside" id="o0a-ur-BKK"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="发送端与接收端必须连接同一个WiFi" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CwD-xL-EIN">
+                                <rect key="frame" x="56" y="384" width="263" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="2Qw-Ne-Xxa"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="CwD-xL-EIN" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" constant="40" id="8Nt-hY-8VQ"/>
+                            <constraint firstItem="01g-CT-tH0" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" constant="50" id="9ap-Ta-2TD"/>
+                            <constraint firstItem="01g-CT-tH0" firstAttribute="top" secondItem="vo9-Q2-d8X" secondAttribute="bottom" constant="40" id="DdF-Lx-ptK"/>
+                            <constraint firstItem="vo9-Q2-d8X" firstAttribute="top" secondItem="uEw-UM-LJ8" secondAttribute="bottom" constant="30" id="F6P-dw-2n4"/>
+                            <constraint firstItem="vo9-Q2-d8X" firstAttribute="leading" secondItem="TpU-gO-2f1" secondAttribute="leadingMargin" constant="50" id="aXZ-1c-O2V"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="CwD-xL-EIN" secondAttribute="trailing" constant="40" id="ehL-mV-hks"/>
+                            <constraint firstItem="CwD-xL-EIN" firstAttribute="top" secondItem="01g-CT-tH0" secondAttribute="bottom" constant="20" id="nuK-gv-jlI"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="01g-CT-tH0" secondAttribute="trailing" constant="50" id="pkX-Zd-a2Q"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="vo9-Q2-d8X" secondAttribute="trailing" constant="50" id="tBb-se-vwK"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="qFD-Bx-zeI"/>
+                    <connections>
+                        <outlet property="revButton" destination="01g-CT-tH0" id="bgz-Eg-JUw"/>
+                        <outlet property="sendButton" destination="vo9-Q2-d8X" id="w7Y-YI-4nS"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tc2-Qw-aMS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="305" y="433"/>
+            <point key="canvasLocation" x="1244" y="432.23388305847078"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="ng6-nT-adS">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="gak-4Y-iMP" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="1xU-gr-RJf">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="whP-gf-Uak" kind="relationship" relationship="rootViewController" id="Vfz-52-ToM"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Gmg-LC-llz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="304.80000000000001" y="432.23388305847078"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="sync_recive_icon" width="32" height="32"/>
+        <image name="sync_send_icon" width="32" height="32"/>
+    </resources>
 </document>

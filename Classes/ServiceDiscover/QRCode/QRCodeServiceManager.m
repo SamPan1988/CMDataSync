@@ -101,6 +101,7 @@
         stringValue = metadataObject.stringValue;
         if (self.scanComplete) {
             self.scanComplete(stringValue);
+            self.scanComplete = nil;
         }
     }
 }

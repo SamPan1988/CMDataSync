@@ -102,6 +102,7 @@
     if (innerError) {
         self.connectStatus = CMSyncConnectStatusConnectError;
         [resolveProtocol didReceiveConnectStatus:CMSyncConnectStatusConnectError error:innerError];
+        *error = innerError;
         return selfAdress;
     }
     self.port = port;

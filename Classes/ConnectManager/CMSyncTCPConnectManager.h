@@ -8,10 +8,9 @@
 #import "CMSyncDefine.h"
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
-typedef NSInteger CMSyncErrorCode;
-const CMSyncErrorCode CMSyncConnected = 750;
+#define kCMSyncErrorCodeConnected 750
 
+NS_ASSUME_NONNULL_BEGIN
 
 /// CMSyncConnectManager 负责链接的建立和状态跟踪
 @interface CMSyncTCPConnectManager : NSObject <CMSyncConnectManager>

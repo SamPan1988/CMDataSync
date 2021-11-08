@@ -32,16 +32,22 @@
     switch (status) {
         case CMSyncConnectStatusIdle:
             break;
+        case CMSyncConnectStatusConnectWaiting:
+            
+            break;
         case CMSyncConnectStatusConnecting:
             break;
         case CMSyncConnectStatusConnected:
-//            [self.tipsLabel removeFromSuperview];
-//            self.tipsLabel = nil;
-//            [self setSendTable];
+            //            [self.tipsLabel removeFromSuperview];
+            //            self.tipsLabel = nil;
+            //            [self setSendTable];
             break;
-        case CMSyncConnectStatusConnectTimeout:
-//            [self showConnectTimeoutAlert];
-            break;;
+        case CMSyncConnectStatusDisconnect:
+            
+            break;
+        case CMSyncConnectStatusConnectError:
+            
+            break;
     }
 }
 

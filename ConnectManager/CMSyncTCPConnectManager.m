@@ -5,11 +5,11 @@
 //  Created by 潘绍森 on 2021/11/3.
 //
 
-#import "CMSyncConnectManager.h"
+#import "CMSyncTCPConnectManager.h"
 #import <CocoaAsyncSocket/GCDAsyncSocket.h>
 #import "CMDataSyncTool.h"
 
-@interface CMSyncConnectManager()<GCDAsyncSocketDelegate>
+@interface CMSyncTCPConnectManager()<GCDAsyncSocketDelegate>
 /// 当前网络连接状态
 @property (nonatomic, assign) CMSyncConnectStatus connectStatus;
 @property (nonatomic, strong) id <CMSyncResolveProtocol> resolveDelegate;
@@ -25,7 +25,7 @@
 @property (nonatomic, strong) GCDAsyncSocket *socket;
 @end
 
-@implementation CMSyncConnectManager
+@implementation CMSyncTCPConnectManager
 
 - (NSMutableDictionary *) currentWrittingDataDict {
     if (!_currentWrittingDataDict) {
@@ -50,9 +50,9 @@
 
 + (instancetype) shared {
     dispatch_once_t connectToken;
-    static CMSyncConnectManager *shared;
+    static CMSyncTCPConnectManager *shared;
     dispatch_once(&connectToken, ^{
-        shared = [[CMSyncConnectManager alloc] init];
+        shared = [[CMSyncTCPConnectManager alloc] init];
     });
     return shared;
 }
@@ -218,3 +218,4 @@
 
 
 @end
+    

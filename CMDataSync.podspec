@@ -30,6 +30,7 @@ TODO: Add long description of the pod here.
 
   s.ios.deployment_target = '9.0'
 
+  s.public_header_files = 'Classes/**/*.h'
   s.source_files = 'Classes/**/*.{h,m}'
   
   # s.resource_bundles = {

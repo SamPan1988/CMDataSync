@@ -14,7 +14,7 @@ const CMSyncErrorCode CMSyncConnected = 750;
 
 
 /// CMSyncConnectManager 负责链接的建立和状态跟踪
-@interface CMSyncConnectManager : NSObject
+@interface CMSyncTCPConnectManager : NSObject <CMSyncConnectManager>
 
 + (instancetype) shared;
 

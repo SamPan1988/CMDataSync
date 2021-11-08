@@ -8,6 +8,7 @@
 #ifndef CMSyncDefine_h
 #define CMSyncDefine_h
 
+
 //用于描述TCP链接的状态
 typedef enum : NSUInteger {
     CMSyncConnectStatusIdle,

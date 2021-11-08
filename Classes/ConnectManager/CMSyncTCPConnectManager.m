@@ -62,7 +62,7 @@
               resolveProtocol:(id <CMSyncResolveProtocol> ) resolveProtocol {
     dispatch_async(self.delegateQueue, ^{
         if (self.socket && self.socket.isConnected) {
-            NSError *error = [NSError errorWithDomain:@"CMDataSync: Connection already exists.\n" code:CMSyncConnected userInfo:nil];
+            NSError *error = [NSError errorWithDomain:@"CMDataSync: Connection already exists.\n" code:kCMSyncErrorCodeConnected userInfo:nil];
             self.connectStatus = CMSyncConnectStatusConnectError;
             [resolveProtocol didReceiveConnectStatus:CMSyncConnectStatusConnectError error:error];
             return;
@@ -89,7 +89,7 @@
     __block NSError *innerError;
     dispatch_sync(self.delegateQueue, ^{
         if (self.socket && self.socket.isConnected) {
-            NSError *reconnectError = [NSError errorWithDomain:@"CMDataSync: Connection already exists.\n" code:CMSyncConnected userInfo:nil];
+            NSError *reconnectError = [NSError errorWithDomain:@"CMDataSync: Connection already exists.\n" code:kCMSyncErrorCodeConnected userInfo:nil];
             self.connectStatus = CMSyncConnectStatusConnectError;
             [resolveProtocol didReceiveConnectStatus:CMSyncConnectStatusConnectError error:reconnectError];
             innerError = reconnectError;

@@ -1,10 +1,12 @@
 use_frameworks!
 
 platform :ios, '9.0'
+source 'https://github.com/CocoaPods/Specs.git'
 
 target 'CMDataSync_Example' do
   pod 'CMDataSync', :path => '../'
-
+  pod 'Realm', '~> 3.13.1'
+  
   target 'CMDataSync_Tests' do
     inherit! :search_paths
 

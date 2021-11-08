@@ -2,22 +2,28 @@ PODS:
   - CMDataSync (0.1.0):
     - CocoaAsyncSocket
   - CocoaAsyncSocket (7.6.5)
+  - Realm (3.13.1):
+    - Realm/Headers (= 3.13.1)
+  - Realm/Headers (3.13.1)
 
 DEPENDENCIES:
   - CMDataSync (from `../`)
+  - Realm (~> 3.13.1)
 
 SPEC REPOS:
-  trunk:
+  https://github.com/CocoaPods/Specs.git:
     - CocoaAsyncSocket
+    - Realm
 
 EXTERNAL SOURCES:
   CMDataSync:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CMDataSync: 88300926439ef6df4ef5c27014e10d9839a6869a
+  CMDataSync: 17ace39c12df733593a36ee270cb18c1e0e09d23
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
+  Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
 
-PODFILE CHECKSUM: 1536ade7e26085771cfbd7ab11a47f10c7790e82
+PODFILE CHECKSUM: 4d927428d01d1acd779b2eacee8ac0029845521e
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.10.1

@@ -7,6 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+static const NSInteger kCMNoteModelTransferCode = 2;
+static const NSInteger kCMNoteMetaTransferCode = 3;
+static const NSInteger kCMNoteContentTransferCode = 4;
 
 NS_ASSUME_NONNULL_BEGIN
 

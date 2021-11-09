@@ -6,6 +6,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 target 'CMDataSync_Example' do
   pod 'CMDataSync', :path => '../'
   pod 'Realm', '~> 3.13.1'
+  pod 'YYModel'
   
   target 'CMDataSync_Tests' do
     inherit! :search_paths

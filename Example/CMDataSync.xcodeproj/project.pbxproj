@@ -33,6 +33,7 @@
 		DD82598E2733CF7A00056724 /* UIColor+ext.m in Sources */ = {isa = PBXBuildFile; fileRef = DD82598D2733CF7A00056724 /* UIColor+ext.m */; };
 		F4CA63112738FA53006C7B12 /* SenderResolveProtocolManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */; };
 		F4CA63142739012E006C7B12 /* ReceiverResolveProtocolManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA63132739012E006C7B12 /* ReceiverResolveProtocolManager.m */; };
+		F4CA6326273A17F6006C7B12 /* CMResolveProtocolTool.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA6325273A17F6006C7B12 /* CMResolveProtocolTool.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +94,8 @@
 		F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SenderResolveProtocolManager.m; sourceTree = "<group>"; };
 		F4CA63122739012E006C7B12 /* ReceiverResolveProtocolManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReceiverResolveProtocolManager.h; sourceTree = "<group>"; };
 		F4CA63132739012E006C7B12 /* ReceiverResolveProtocolManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReceiverResolveProtocolManager.m; sourceTree = "<group>"; };
+		F4CA6324273A17F6006C7B12 /* CMResolveProtocolTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMResolveProtocolTool.h; sourceTree = "<group>"; };
+		F4CA6325273A17F6006C7B12 /* CMResolveProtocolTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMResolveProtocolTool.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -299,6 +302,8 @@
 				F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */,
 				F4CA63122739012E006C7B12 /* ReceiverResolveProtocolManager.h */,
 				F4CA63132739012E006C7B12 /* ReceiverResolveProtocolManager.m */,
+				F4CA6324273A17F6006C7B12 /* CMResolveProtocolTool.h */,
+				F4CA6325273A17F6006C7B12 /* CMResolveProtocolTool.m */,
 			);
 			path = CustomResolveProtocol;
 			sourceTree = "<group>";
@@ -438,12 +443,14 @@
 				"${BUILT_PRODUCTS_DIR}/CMDataSync/CMDataSync.framework",
 				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
+				"${BUILT_PRODUCTS_DIR}/YYModel/YYModel.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CMDataSync.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYModel.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -489,6 +496,7 @@
 				DD82597E2733C25B00056724 /* CMRevQRCodeVC.m in Sources */,
 				6003F5A7195388D20070C39A /* CMViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				F4CA6326273A17F6006C7B12 /* CMResolveProtocolTool.m in Sources */,
 				DD8259812733C55600056724 /* CMScanQRCodeVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -5,15 +5,18 @@ PODS:
   - Realm (3.13.1):
     - Realm/Headers (= 3.13.1)
   - Realm/Headers (3.13.1)
+  - YYModel (1.0.4)
 
 DEPENDENCIES:
   - CMDataSync (from `../`)
   - Realm (~> 3.13.1)
+  - YYModel
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - CocoaAsyncSocket
     - Realm
+    - YYModel
 
 EXTERNAL SOURCES:
   CMDataSync:
@@ -23,7 +26,8 @@ SPEC CHECKSUMS:
   CMDataSync: 88300926439ef6df4ef5c27014e10d9839a6869a
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   Realm: 50071da38fe079e0735e47c9f2eae738c68c5996
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: 4d927428d01d1acd779b2eacee8ac0029845521e
+PODFILE CHECKSUM: ef19529c3d005963e0f59ef80a1e58e67af32343
 
 COCOAPODS: 1.11.2

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #define kCMSyncErrorCodeConnected 750
+static const long kCMListenInitialTag = -9394;
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -106,6 +106,9 @@
     self.port = port;
     self.resolveDelegate = resolveProtocol;
     selfAdress = [CMDataSyncTool getCurrentMachineIpAddress];
+    NSMutableData *readBuffer = [[NSMutableData alloc] init];
+    self.currentReadBufferDict[@(kCMListenInitialTag)] = readBuffer;
+    [self.socket readDataWithTimeout:-1 buffer:readBuffer bufferOffset:0 tag:kCMListenInitialTag];
     return selfAdress;
 }
 
@@ -137,7 +140,7 @@
         //一读一写是相对的
         NSMutableData *readBuffer = [[NSMutableData alloc] init];
         self.currentReadBufferDict[@(tag)] = readBuffer;
-        [self.socket readDataWithTimeout:10 buffer:readBuffer bufferOffset:0 tag:tag];
+        [self.socket readDataWithTimeout:-1 buffer:readBuffer bufferOffset:0 tag:tag];
         self.currentWrittingDataDict[@(tag)] = data;
         [self.socket writeData:data withTimeout:10 tag:tag];
     });

@@ -9,11 +9,11 @@
 #import "QRCodeServiceManager.h"
 #import "CMSyncTCPConnectManager.h"
 
-NSString const *kCMDataSyncAddHead = @"CMDataSync";
-const NSUInteger kCMDataSyncDefaultPort = 5488;
+static NSString const *kCMDataSyncAddHead = @"CMDataSync";
+static const NSUInteger kCMDataSyncDefaultPort = 5488;
 
 static QRCodeServiceManager *tempHolder;
-const NSUInteger kCMSendDataConstraint = 1 * 1024 * 1024;
+static const NSUInteger kCMSendDataConstraint = 1 * 1024 * 1024;
 static NSUInteger CMLatestSendingDataSize = 0;
 
 @implementation CMDataSyncQRCodeTCPquickStarter

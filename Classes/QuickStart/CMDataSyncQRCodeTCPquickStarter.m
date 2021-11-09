@@ -13,11 +13,14 @@ NSString const *kCMDataSyncAddHead = @"CMDataSync";
 const NSUInteger kCMDataSyncDefaultPort = 5488;
 
 static QRCodeServiceManager *tempHolder;
+const NSUInteger kCMSendDataConstraint = 1 * 1024 * 1024;
+static NSUInteger CMLatestSendingDataSize = 0;
 
 @implementation CMDataSyncQRCodeTCPquickStarter
 
 + (void) startConnectionWithScanView:(UIView *) view
                senderResolveProtocol:(id <CMSyncResolveProtocol>) senderResolveProtocol {
+    //TODO: 这里的内存管理方式怪怪的，以后想想怎么改
     tempHolder = [[QRCodeServiceManager alloc] init];
     [tempHolder startToScanWithView:view complete:^(NSString * receiveAddress) {
        NSArray <NSString *> *stringArrs = [receiveAddress componentsSeparatedByString:@"_"];
@@ -51,6 +54,19 @@ static QRCodeServiceManager *tempHolder;
     QRCodeServiceManager *qrCodeManager = [[QRCodeServiceManager alloc] init];
     UIImage *qrCodeImage = [qrCodeManager generateQRCodeWithString:commpleteAddress Size:size];
     return qrCodeImage;
+}
+
++ (void) stopConnection {
+    if (CMLatestSendingDataSize <= kCMSendDataConstraint) {
+        [[CMSyncTCPConnectManager shared] stopConnect:CMSyncDisconnectOptionPendingSend];
+    } else {
+        [[CMSyncTCPConnectManager shared] stopConnect:CMSyncDisconnectOptionPendingNone];
+    }
+}
+
++ (void) sendData:(NSData *) data withTag: (NSUInteger) tag {
+    CMLatestSendingDataSize = data.length;
+    [[CMSyncTCPConnectManager shared] sendData:data tag:tag];
 }
 
 @end

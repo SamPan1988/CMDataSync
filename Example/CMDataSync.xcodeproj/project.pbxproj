@@ -31,6 +31,8 @@
 		DD8259862733CDFF00056724 /* CMSendViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8259852733CDFE00056724 /* CMSendViewController.m */; };
 		DD82598A2733CEF200056724 /* SelectNotebookView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8259882733CEF200056724 /* SelectNotebookView.m */; };
 		DD82598E2733CF7A00056724 /* UIColor+ext.m in Sources */ = {isa = PBXBuildFile; fileRef = DD82598D2733CF7A00056724 /* UIColor+ext.m */; };
+		F4CA63112738FA53006C7B12 /* SenderResolveProtocolManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */; };
+		F4CA63142739012E006C7B12 /* ReceiverResolveProtocolManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA63132739012E006C7B12 /* ReceiverResolveProtocolManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +89,10 @@
 		DD82598C2733CF7A00056724 /* UIColor+ext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+ext.h"; sourceTree = "<group>"; };
 		DD82598D2733CF7A00056724 /* UIColor+ext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+ext.m"; sourceTree = "<group>"; };
 		F3F01012AB8F4D479085E5D3 /* Pods-CMDataSync_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CMDataSync_Example.debug.xcconfig"; path = "Target Support Files/Pods-CMDataSync_Example/Pods-CMDataSync_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		F4CA630F2738FA53006C7B12 /* SenderResolveProtocolManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SenderResolveProtocolManager.h; sourceTree = "<group>"; };
+		F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SenderResolveProtocolManager.m; sourceTree = "<group>"; };
+		F4CA63122739012E006C7B12 /* ReceiverResolveProtocolManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReceiverResolveProtocolManager.h; sourceTree = "<group>"; };
+		F4CA63132739012E006C7B12 /* ReceiverResolveProtocolManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReceiverResolveProtocolManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +245,7 @@
 		DD8259792733C20700056724 /* controller */ = {
 			isa = PBXGroup;
 			children = (
+				F4CA630E2738FA28006C7B12 /* CustomResolveProtocol */,
 				DD82598B2733CF5000056724 /* catagory */,
 				DD8259872733CED300056724 /* view */,
 				DD82597B2733C22400056724 /* rev */,
@@ -283,6 +290,17 @@
 				DD82598D2733CF7A00056724 /* UIColor+ext.m */,
 			);
 			path = catagory;
+			sourceTree = "<group>";
+		};
+		F4CA630E2738FA28006C7B12 /* CustomResolveProtocol */ = {
+			isa = PBXGroup;
+			children = (
+				F4CA630F2738FA53006C7B12 /* SenderResolveProtocolManager.h */,
+				F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */,
+				F4CA63122739012E006C7B12 /* ReceiverResolveProtocolManager.h */,
+				F4CA63132739012E006C7B12 /* ReceiverResolveProtocolManager.m */,
+			);
+			path = CustomResolveProtocol;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -464,7 +482,9 @@
 				DD8259752733B84900056724 /* NotebookModel.m in Sources */,
 				DD8259862733CDFF00056724 /* CMSendViewController.m in Sources */,
 				6003F59E195388D20070C39A /* CMAppDelegate.m in Sources */,
+				F4CA63112738FA53006C7B12 /* SenderResolveProtocolManager.m in Sources */,
 				DD82598A2733CEF200056724 /* SelectNotebookView.m in Sources */,
+				F4CA63142739012E006C7B12 /* ReceiverResolveProtocolManager.m in Sources */,
 				DD82598E2733CF7A00056724 /* UIColor+ext.m in Sources */,
 				DD82597E2733C25B00056724 /* CMRevQRCodeVC.m in Sources */,
 				6003F5A7195388D20070C39A /* CMViewController.m in Sources */,

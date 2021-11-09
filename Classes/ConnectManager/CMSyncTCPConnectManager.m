@@ -83,8 +83,7 @@
 }
 
 - (NSString *) startWaitingForConnectOnPort:(uint16_t) port
-                            resolveProtocol:(id <CMSyncResolveProtocol>) resolveProtocol
-                                      error:(NSError * *) error {
+                            resolveProtocol:(id <CMSyncResolveProtocol>) resolveProtocol {
     NSString *selfAdress;
     __block NSError *innerError;
     dispatch_sync(self.delegateQueue, ^{
@@ -102,7 +101,6 @@
     if (innerError) {
         self.connectStatus = CMSyncConnectStatusConnectError;
         [resolveProtocol didReceiveConnectStatus:CMSyncConnectStatusConnectError error:innerError];
-        *error = innerError;
         return selfAdress;
     }
     self.port = port;

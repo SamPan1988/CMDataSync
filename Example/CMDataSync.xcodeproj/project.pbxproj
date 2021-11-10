@@ -28,8 +28,7 @@
 		DD8259782733BEA200056724 /* data.txt in Resources */ = {isa = PBXBuildFile; fileRef = DD8259772733BEA200056724 /* data.txt */; };
 		DD82597E2733C25B00056724 /* CMRevQRCodeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = DD82597D2733C25B00056724 /* CMRevQRCodeVC.m */; };
 		DD8259812733C55600056724 /* CMScanQRCodeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8259802733C55600056724 /* CMScanQRCodeVC.m */; };
-		DD8259862733CDFF00056724 /* CMSendViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8259852733CDFE00056724 /* CMSendViewController.m */; };
-		DD82598A2733CEF200056724 /* SelectNotebookView.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8259882733CEF200056724 /* SelectNotebookView.m */; };
+		DD82598A2733CEF200056724 /* SelectNotebookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8259882733CEF200056724 /* SelectNotebookViewController.m */; };
 		DD82598E2733CF7A00056724 /* UIColor+ext.m in Sources */ = {isa = PBXBuildFile; fileRef = DD82598D2733CF7A00056724 /* UIColor+ext.m */; };
 		F4CA63112738FA53006C7B12 /* SenderResolveProtocolManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */; };
 		F4CA63142739012E006C7B12 /* ReceiverResolveProtocolManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA63132739012E006C7B12 /* ReceiverResolveProtocolManager.m */; };
@@ -83,10 +82,8 @@
 		DD82597D2733C25B00056724 /* CMRevQRCodeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMRevQRCodeVC.m; sourceTree = "<group>"; };
 		DD82597F2733C55600056724 /* CMScanQRCodeVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMScanQRCodeVC.h; sourceTree = "<group>"; };
 		DD8259802733C55600056724 /* CMScanQRCodeVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMScanQRCodeVC.m; sourceTree = "<group>"; };
-		DD8259842733CDFE00056724 /* CMSendViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMSendViewController.h; sourceTree = "<group>"; };
-		DD8259852733CDFE00056724 /* CMSendViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMSendViewController.m; sourceTree = "<group>"; };
-		DD8259882733CEF200056724 /* SelectNotebookView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectNotebookView.m; sourceTree = "<group>"; };
-		DD8259892733CEF200056724 /* SelectNotebookView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectNotebookView.h; sourceTree = "<group>"; };
+		DD8259882733CEF200056724 /* SelectNotebookViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectNotebookViewController.m; sourceTree = "<group>"; };
+		DD8259892733CEF200056724 /* SelectNotebookViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectNotebookViewController.h; sourceTree = "<group>"; };
 		DD82598C2733CF7A00056724 /* UIColor+ext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+ext.h"; sourceTree = "<group>"; };
 		DD82598D2733CF7A00056724 /* UIColor+ext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+ext.m"; sourceTree = "<group>"; };
 		F3F01012AB8F4D479085E5D3 /* Pods-CMDataSync_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CMDataSync_Example.debug.xcconfig"; path = "Target Support Files/Pods-CMDataSync_Example/Pods-CMDataSync_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -262,8 +259,6 @@
 			children = (
 				DD82597F2733C55600056724 /* CMScanQRCodeVC.h */,
 				DD8259802733C55600056724 /* CMScanQRCodeVC.m */,
-				DD8259842733CDFE00056724 /* CMSendViewController.h */,
-				DD8259852733CDFE00056724 /* CMSendViewController.m */,
 			);
 			path = send;
 			sourceTree = "<group>";
@@ -280,8 +275,8 @@
 		DD8259872733CED300056724 /* view */ = {
 			isa = PBXGroup;
 			children = (
-				DD8259892733CEF200056724 /* SelectNotebookView.h */,
-				DD8259882733CEF200056724 /* SelectNotebookView.m */,
+				DD8259892733CEF200056724 /* SelectNotebookViewController.h */,
+				DD8259882733CEF200056724 /* SelectNotebookViewController.m */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -487,10 +482,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DD8259752733B84900056724 /* NotebookModel.m in Sources */,
-				DD8259862733CDFF00056724 /* CMSendViewController.m in Sources */,
 				6003F59E195388D20070C39A /* CMAppDelegate.m in Sources */,
 				F4CA63112738FA53006C7B12 /* SenderResolveProtocolManager.m in Sources */,
-				DD82598A2733CEF200056724 /* SelectNotebookView.m in Sources */,
+				DD82598A2733CEF200056724 /* SelectNotebookViewController.m in Sources */,
 				F4CA63142739012E006C7B12 /* ReceiverResolveProtocolManager.m in Sources */,
 				DD82598E2733CF7A00056724 /* UIColor+ext.m in Sources */,
 				DD82597E2733C25B00056724 /* CMRevQRCodeVC.m in Sources */,

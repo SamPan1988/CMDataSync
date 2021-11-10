@@ -9,17 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "NotebookModel.h"
 
-@class SelectNotebookView;
+@class SelectNotebookViewController;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol SelectNotebookViewDelegate <NSObject>
 
--(void)sendDataTable:(SelectNotebookView *)table selectedNotebooks:(NSArray<NotebookModel *> *)selectedNotebooks;
+-(void)sendDataTable:(SelectNotebookViewController *)table selectedNotebooks:(NSArray<NotebookModel *> *)selectedNotebooks;
 
 @end
 
-@interface SelectNotebookView : UIView
+@interface SelectNotebookViewController : UIViewController
 
 @property (nonatomic,weak) id<SelectNotebookViewDelegate> delegate;
 

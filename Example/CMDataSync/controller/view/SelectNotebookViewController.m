@@ -6,10 +6,10 @@
 //  Copyright © 2020 Tb. All rights reserved.
 //
 
-#import "SelectNotebookView.h"
+#import "SelectNotebookViewController.h"
 
 
-@interface SelectNotebookView () <UITableViewDataSource,UITableViewDelegate>
+@interface SelectNotebookViewController () <UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic,strong) UITableView *mainTableView;
 @property (nonatomic,strong) UIButton *sendButton;
@@ -18,22 +18,22 @@
 @property (nonatomic,copy) NSMutableSet <NSIndexPath *>*selectedIndexPaths;
 @end
 
-@implementation SelectNotebookView
+@implementation SelectNotebookViewController
 
 
 #pragma mark - init
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        _selectedIndexPaths = [NSMutableSet new];
-        [self initUI];
-    }
-    return self;
+
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    _selectedIndexPaths = [NSMutableSet new];
+    [self initUI];
 }
+
 - (void)initUI {
     UIView *tipsView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, GH_WIDTH, 40)];
     tipsView.backgroundColor = [UIColor colorWithRGB:0xF4F4F4];
-    [self addSubview:tipsView];
+    [self.view addSubview:tipsView];
     
     
     UILabel *tipsLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 0, GH_WIDTH-10, 40)];
@@ -43,12 +43,12 @@
     [tipsView addSubview:tipsLabel];
     
     self.mainTableView.frame = CGRectMake(0, 40, GH_WIDTH, GH_HEIGHT - 40 - 64);
-    [self addSubview:self.mainTableView];
+    [self.view addSubview:self.mainTableView];
     
     
     UIView *bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, GH_HEIGHT - 64 - 80, GH_WIDTH, 80)];
     bottomView.backgroundColor = [UIColor colorWithRGB:0xF3F3F3];
-    [self addSubview:bottomView];
+    [self.view addSubview:bottomView];
     
     _selectAllButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _selectAllButton.frame = CGRectMake(0, 0, GH_WIDTH/2, 40);

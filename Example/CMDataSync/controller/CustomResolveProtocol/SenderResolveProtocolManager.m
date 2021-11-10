@@ -12,6 +12,8 @@
 @interface SenderResolveProtocolManager()
 @property (nonatomic, assign, readwrite) float bigFileProgress; //大文件发送进度
 @property (nonatomic, assign, readwrite) CMSyncConnectStatus status; //连接状态,kvo
+@property (nonatomic, copy, readwrite) NSString *statusStr; //连接状态,kvo
+@property (nonatomic, copy, readwrite) NSString *transmitStr; //传输状态,kvo
 @end
 
 @implementation SenderResolveProtocolManager
@@ -28,6 +30,7 @@
 
 - (void) didReceiveConnectStatus:(CMSyncConnectStatus) status error:(NSError *) connectError {
     self.status = status;
+    self.statusStr = [CMResolveProtocolTool convertStauts:status];
     switch (status) {
         case CMSyncConnectStatusIdle:
             NSLog(@"CMDataSync:发送方，初始状态");
@@ -63,6 +66,8 @@
                receiveLength:(NSUInteger) receivedLength
                          tag:(NSUInteger) tag
               transmitStatus:(CMSyncTransmitStatus) transmitStatus {
+    self.transmitStr = [CMResolveProtocolTool convertTransmitStatus:transmitStatus];
+    
     switch (transmitStatus) {
         case CMSyncTransmitStatusWaiting:
             

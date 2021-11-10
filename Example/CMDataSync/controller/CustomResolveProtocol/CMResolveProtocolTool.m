@@ -62,4 +62,34 @@ const static NSUInteger kCMReserveHeaderLength = 8;
     completor(code, status, resultData);
 }
 
++ (NSString *) convertStauts:(CMSyncConnectStatus) status {
+    switch (status) {
+        case CMSyncConnectStatusIdle:
+            return @"链接初始状态";
+        case CMSyncConnectStatusConnectWaiting:
+            return @"等待链接";
+        case CMSyncConnectStatusConnecting:
+            return @"正在链接";
+        case CMSyncConnectStatusConnected:
+            return @"成功链接";
+        case CMSyncConnectStatusDisconnect:
+            return @"链接断开";
+        case CMSyncConnectStatusConnectError:
+            return @"链接失败";
+    }
+}
+
++ (NSString *) convertTransmitStatus:(CMSyncTransmitStatus) transmitStatus {
+    switch (transmitStatus) {
+        case CMSyncTransmitStatusWaiting:
+            return @"等待传输中";
+        case CMSyncTransmitStatusTimeout:
+            return @"传输超时";
+        case CMSyncTransmitStatusSending:
+            return @"正在传输";
+        case CMSyncTransmitStatusComplete:
+            return @"传输结束";
+    }
+}
+
 @end

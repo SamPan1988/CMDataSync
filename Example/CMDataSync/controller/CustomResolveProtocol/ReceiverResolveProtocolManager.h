@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, readonly) float bigFileProgress; //大文件接收进度
 @property (nonatomic, assign, readonly) CMSyncConnectStatus status; //连接状态,kvo
+@property (nonatomic, copy, readonly) NSString *statusStr; //连接状态,kvo
+@property (nonatomic, copy, readonly) NSString *transmitStr; //传输状态,kvo
 
 + (instancetype) shared;
 

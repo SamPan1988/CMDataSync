@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CMDataSync/CMDataSync.h>
 static const NSInteger kCMNoteModelTransferCode = 2;
 static const NSInteger kCMNoteMetaTransferCode = 3;
 static const NSInteger kCMNoteContentTransferCode = 4;
@@ -32,6 +33,13 @@ typedef void(^CMResolveCompletor)(UInt8 code, UInt8 status, NSData *receivedData
 /// @param completor 分离后的结果
 + (void) resolveIncomeData:(NSData *) data
                   complete:(CMResolveCompletor) completor;
+
+
+/// 转换链接状态为文本
+/// @param status 链接状态
++ (NSString *) convertStauts:(CMSyncConnectStatus) status;
+
++ (NSString *) convertTransmitStatus:(CMSyncTransmitStatus) transmitStatus;
 
 
 @end

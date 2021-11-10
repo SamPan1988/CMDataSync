@@ -16,6 +16,9 @@
 @property (nonatomic, assign, readwrite) float bigFileProgress; //大文件接收进度,kvo
 @property (nonatomic, assign, readwrite) CMSyncConnectStatus status; //连接状态,kvo
 
+@property (nonatomic, copy, readwrite) NSString *statusStr; //连接状态,kvo
+@property (nonatomic, copy, readwrite) NSString *transmitStr; //传输状态,kvo
+
 @property (nonatomic, assign) NSInteger currentCode;
 @property (nonatomic, strong) NotebookModel *receiveModel;
 @end
@@ -36,7 +39,8 @@
 /// @param status 网络连接状态
 /// @param connectError 连接错误时，回调的错误信息
 - (void) didReceiveConnectStatus:(CMSyncConnectStatus) status error:(NSError *) connectError {
-    
+    self.status = status;
+    self.statusStr = [CMResolveProtocolTool convertStauts:status];
 }
 
 
@@ -62,6 +66,7 @@
                receiveLength:(NSUInteger) receivedLength
                          tag:(NSUInteger) tag
               transmitStatus:(CMSyncTransmitStatus) transmitStatus {
+    self.transmitStr = [CMResolveProtocolTool convertTransmitStatus:transmitStatus];
     switch (transmitStatus) {
         case CMSyncTransmitStatusWaiting:
             

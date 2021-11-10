@@ -10,13 +10,28 @@
 #import "CMResolveProtocolTool.h"
 #import "NotebookModel.h"
 #import <YYModel/YYModel.h>
+#import <CMDataSync/CMDataSync.h>
 
 @interface ReceiverResolveProtocolManager()
-@property (nonatomic, assign, readwrite) float bigFileProgress; //大文件接收进度
+@property (nonatomic, assign, readwrite) float bigFileProgress; //大文件接收进度,kvo
+@property (nonatomic, assign, readwrite) CMSyncConnectStatus status; //连接状态,kvo
+
+@property (nonatomic, assign) NSInteger currentCode;
 @property (nonatomic, strong) NotebookModel *receiveModel;
 @end
 
 @implementation ReceiverResolveProtocolManager
+
++ (instancetype) shared {
+    dispatch_once_t ReceiverConnectToken;
+    static ReceiverResolveProtocolManager *shared;
+    dispatch_once(&ReceiverConnectToken, ^{
+        shared = [[ReceiverResolveProtocolManager alloc] init];
+    });
+    return shared;
+}
+
+
 /// 用于接收当前连接状态
 /// @param status 网络连接状态
 /// @param connectError 连接错误时，回调的错误信息
@@ -56,8 +71,16 @@
             break;
         case CMSyncTransmitStatusSending:
             break;
+        //TODO: 如果实际不会停，得重新想个逻辑
         case CMSyncTransmitStatusComplete:
             [CMResolveProtocolTool resolveIncomeData:buffer complete:^(UInt8 code, UInt8 status, NSData * _Nonnull receivedData) {
+                //没有收到数据的话
+                if (!receivedData) {
+                    //返回接收失败
+                    NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                    return;
+                }
                 if (code == kCMNoteModelTransferCode) {
                     NSLog(@"笔记模型接收");
                     //传输笔记的id和数据长度
@@ -69,7 +92,9 @@
                     NSLog(@"笔记的内容接收");
                     //传输下一个笔记本或者断开链接
                 }
-                
+                //回复接收成功
+                NSData *responseSucceedData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:1];
+                [CMDataSyncQRCodeTCPquickStarter sendData:responseSucceedData withTag:1];
             }];
             break;
     }

@@ -82,10 +82,8 @@ typedef enum : NSUInteger {
 /// 作为接收方等待连接建立，建立监听成功后，返回本机地址作公告之用
 /// @param port 监听port
 /// @param resolveProtocol  解释数据代理实例, manager对代理实例有强引用，直到链接结束
-/// @param error 错误回调
 - (NSString *) startWaitingForConnectOnPort:(uint16_t) port
-                            resolveProtocol:(id <CMSyncResolveProtocol>) resolveProtocol
-                                      error:(NSError * *) error;
+                            resolveProtocol:(id <CMSyncResolveProtocol>) resolveProtocol;
 
 @required
 /// 关闭链接

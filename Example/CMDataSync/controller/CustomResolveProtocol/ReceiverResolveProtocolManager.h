@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ReceiverResolveProtocolManager : NSObject <CMSyncResolveProtocol>
 
 @property (nonatomic, assign, readonly) float bigFileProgress; //大文件接收进度
+@property (nonatomic, assign, readonly) CMSyncConnectStatus status; //连接状态,kvo
+
++ (instancetype) shared;
 
 /// 用于接收当前连接状态
 /// @param status 网络连接状态

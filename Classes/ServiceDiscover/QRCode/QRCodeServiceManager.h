@@ -18,6 +18,8 @@ typedef void(^CMScanComplete)(NSString *);
 
 - (UIImage *)generateQRCodeWithString:(NSString *)string Size:(CGFloat)size;
 
+- (void) stopScanning;
+
 @end
 
 NS_ASSUME_NONNULL_END

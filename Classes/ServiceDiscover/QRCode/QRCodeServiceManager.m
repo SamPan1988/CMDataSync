@@ -49,6 +49,12 @@
     [ _session startRunning ];
 }
 
+- (void) stopScanning {
+    if (self.session.isRunning) {
+        [self.session stopRunning];
+    }
+}
+
 //生成二维码
 - (UIImage *)generateQRCodeWithString:(NSString *)string Size:(CGFloat)size
 {

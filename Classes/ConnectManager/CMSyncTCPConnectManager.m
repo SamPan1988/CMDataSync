@@ -49,9 +49,9 @@
 }
 
 + (instancetype) shared {
-    dispatch_once_t connectToken;
+    dispatch_once_t CMTcpConnectToken;
     static CMSyncTCPConnectManager *shared;
-    dispatch_once(&connectToken, ^{
+    dispatch_once(&CMTcpConnectToken, ^{
         shared = [[CMSyncTCPConnectManager alloc] init];
     });
     return shared;

@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (void) startConnectionWithScanView:(UIView *) view
                senderResolveProtocol:(id <CMSyncResolveProtocol>) senderResolveProtocol;
 
++ (void) stopScanning;
+
 /// 生成二维码并开展链接监听, 如果失败，则返回nil，并在解释类中回调失败error
 /// @param size 二维码的大小
 /// @param receiveResolveProtocol 接收方数据解释类，解释类实例会被强引用直到链接断开

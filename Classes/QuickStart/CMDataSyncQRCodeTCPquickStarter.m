@@ -39,11 +39,15 @@ static NSUInteger CMLatestSendingDataSize = 0;
     }];
 }
 
++ (void) stopScanning {
+    [tempHolder stopScanning];
+}
+
 + (UIImage *) waitForConnectionWithSize:(CGFloat ) size
                 receiverResolveProtocol:(id <CMSyncResolveProtocol>) receiveResolveProtocol {
-    NSError *error;
-    NSString *address = [[CMSyncTCPConnectManager shared] startWaitingForConnectOnPort:kCMDataSyncDefaultPort resolveProtocol:receiveResolveProtocol error:&error];
-    if (error || !address) {
+   
+    NSString *address = [[CMSyncTCPConnectManager shared] startWaitingForConnectOnPort:kCMDataSyncDefaultPort resolveProtocol:receiveResolveProtocol];
+    if (!address) {
         return nil;
     }
     NSMutableString *commpleteAddress = [[NSMutableString alloc] initWithString:(NSString *)kCMDataSyncAddHead];

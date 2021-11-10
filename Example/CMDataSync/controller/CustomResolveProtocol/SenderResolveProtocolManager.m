@@ -11,12 +11,23 @@
 
 @interface SenderResolveProtocolManager()
 @property (nonatomic, assign, readwrite) float bigFileProgress; //大文件发送进度
+@property (nonatomic, assign, readwrite) CMSyncConnectStatus status; //连接状态,kvo
 @end
 
 @implementation SenderResolveProtocolManager
 
++ (instancetype) shared {
+    dispatch_once_t CMSenderConnectToken;
+    static SenderResolveProtocolManager *shared;
+    dispatch_once(&CMSenderConnectToken, ^{
+        shared = [[SenderResolveProtocolManager alloc] init];
+    });
+    return shared;
+}
+
 
 - (void) didReceiveConnectStatus:(CMSyncConnectStatus) status error:(NSError *) connectError {
+    self.status = status;
     switch (status) {
         case CMSyncConnectStatusIdle:
             NSLog(@"CMDataSync:发送方，初始状态");

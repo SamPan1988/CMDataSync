@@ -94,7 +94,7 @@ static void *kCMSenderResolveTransmitContext = &kCMSenderResolveTransmitContext;
     [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(statusStr)) context:kCMSenderResolveStatusStringContext];
     [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) context:kCMSenderResolveProgressContext];
     [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(status)) context:kCMSenderResolveStatusContext];
-    [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) context:kCMSenderResolveProgressContext];
+    [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) context:kCMSenderResolveTransmitContext];
 }
 
 #pragma mark - 取消按钮

@@ -10,12 +10,40 @@
 #import "ReceiverResolveProtocolManager.h"
 #import <CMDataSync/CMDataSync.h>
 
+static void *kCMReceiverResolveStatusContext = &kCMReceiverResolveStatusContext;
+static void *kCMReceiverResolveStatusStringContext = &kCMReceiverResolveStatusStringContext;
+static void *kCMReceiverResolveProgressContext = &kCMReceiverResolveProgressContext;
+static void *kCMReceiverResolveTransmitContext = &kCMReceiverResolveTransmitContext;
+
 @interface CMRevQRCodeVC ()
 @property (nonatomic, strong) UIImageView *qrCodeImageView;
 @property (nonatomic, strong) UILabel *statusLabel;
+@property (nonatomic, strong) UILabel *transmitStatusLabel;
+@property (nonatomic, strong) UILabel *progressLabel;
 @end
 
 @implementation CMRevQRCodeVC
+
+- (UILabel *)statusLabel {
+    if (!_statusLabel) {
+        _statusLabel = [[UILabel alloc] init];
+    }
+    return _statusLabel;
+}
+
+- (UILabel *) transmitStatusLabel {
+    if (!_transmitStatusLabel) {
+        _transmitStatusLabel = [[UILabel alloc] init];
+    }
+    return _transmitStatusLabel;
+}
+
+- (UILabel *) progressLabel {
+    if (!_progressLabel) {
+        _progressLabel = [[UILabel alloc] init];
+    }
+    return _progressLabel;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -23,9 +51,10 @@
 }
 
 - (void)initUI {
+    ReceiverResolveProtocolManager *receiver = [ReceiverResolveProtocolManager shared];
     self.title = @"接收数据";
     self.view.backgroundColor = [UIColor whiteColor];
-    UIImage *image = [CMDataSyncQRCodeTCPquickStarter waitForConnectionWithSize:150 receiverResolveProtocol:[ReceiverResolveProtocolManager shared]];
+    UIImage *image = [CMDataSyncQRCodeTCPquickStarter waitForConnectionWithSize:150 receiverResolveProtocol: receiver];
     _qrCodeImageView = [[UIImageView alloc] initWithImage:image];
     [self.view addSubview:_qrCodeImageView];
     _qrCodeImageView.center = CGPointMake(self.view.center.x, self.view.center.y - 30);
@@ -36,6 +65,53 @@
     _statusLabel.font = [UIFont systemFontOfSize:13];
     _statusLabel.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:_statusLabel];
+    
+    [self.view addSubview:self.progressLabel];
+    self.progressLabel.hidden = YES;
+    self.progressLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 40);
+    [self.view addSubview:self.transmitStatusLabel];
+    self.transmitStatusLabel.hidden = YES;
+    self.transmitStatusLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 100);
+    
+    [ receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(status)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveStatusContext];
+    [ receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(statusStr)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveStatusStringContext];
+    [receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveProgressContext];
+    [receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveTransmitContext];
+}
+
+- (void) observeValueForKeyPath:(NSString *)keyPath
+                       ofObject:(id)object
+                         change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                        context:(void *)context {
+    if (context == kCMReceiverResolveStatusContext) {
+        CMSyncConnectStatus status = [change[NSKeyValueChangeNewKey] integerValue];
+        if (status == CMSyncConnectStatusConnected) {
+            //链接成功，隐藏二维码
+            self.qrCodeImageView.hidden = YES;
+            self.statusLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 80);
+            self.progressLabel.hidden = NO;
+            self.transmitStatusLabel.hidden = NO;
+        }
+    }
+    else if (context == kCMReceiverResolveStatusStringContext) {
+        NSString *statusStr = change[NSKeyValueChangeNewKey];
+        self.statusLabel.text = statusStr;
+    } else if (context == kCMReceiverResolveProgressContext) {
+        float progress = [change[NSKeyValueChangeNewKey] floatValue];
+        NSString *progressStr = [NSString stringWithFormat:@"传输进度:%.2f",progress];
+        self.progressLabel.text = progressStr;
+    } else if (context == kCMReceiverResolveTransmitContext) {
+        NSString *transmitStatusStr = change[NSKeyValueChangeNewKey];
+        self.transmitStatusLabel.text = transmitStatusStr;
+    }
+}
+
+- (void)dealloc {
+    ReceiverResolveProtocolManager *receiver = [ReceiverResolveProtocolManager shared];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(statusStr)) context:kCMReceiverResolveStatusStringContext];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) context:kCMReceiverResolveProgressContext];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(status)) context:kCMReceiverResolveStatusContext];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) context:kCMReceiverResolveTransmitContext];
 }
 
 

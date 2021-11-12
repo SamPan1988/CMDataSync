@@ -113,6 +113,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, assign) NSInteger sortIndex;
 
+@property (nonatomic, copy) NSURL *attachment;
+
 @end
 
 

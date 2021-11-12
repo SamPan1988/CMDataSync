@@ -8,12 +8,20 @@
 
 #import "SenderResolveProtocolManager.h"
 #import "CMResolveProtocolTool.h"
+#import "NotebookModel.h"
+#import <YYModel/YYModel.h>
 
 @interface SenderResolveProtocolManager()
+//Status
 @property (nonatomic, assign, readwrite) float bigFileProgress; //大文件发送进度
 @property (nonatomic, assign, readwrite) CMSyncConnectStatus status; //连接状态,kvo
 @property (nonatomic, copy, readwrite) NSString *statusStr; //连接状态,kvo
 @property (nonatomic, copy, readwrite) NSString *transmitStr; //传输状态,kvo
+//Model record
+@property (nonatomic, strong) NSArray <NotebookModel *> *notebooklist;
+@property (nonatomic, assign) NSUInteger currentModelIndex;
+@property (nonatomic, strong) NotebookModel *currentNotebook;
+@property (nonatomic, assign) NSUInteger currentAttachmentSize;
 @end
 
 @implementation SenderResolveProtocolManager
@@ -57,7 +65,10 @@
 - (void) sendedLength:(NSUInteger) sendedLength
                    tag:(NSUInteger) tag
        transmitStatus:(CMSyncTransmitStatus) status {
-    
+    self.transmitStr = [CMResolveProtocolTool convertTransmitStatus:status];
+    if (tag == CMNoteContentTransferCode) {
+        self.bigFileProgress = sendedLength / self.currentAttachmentSize;
+    }
 }
 
 
@@ -66,11 +77,9 @@
                receiveLength:(NSUInteger) receivedLength
                          tag:(NSUInteger) tag
               transmitStatus:(CMSyncTransmitStatus) transmitStatus {
-    self.transmitStr = [CMResolveProtocolTool convertTransmitStatus:transmitStatus];
-    
+
     switch (transmitStatus) {
         case CMSyncTransmitStatusWaiting:
-            
             break;
         case CMSyncTransmitStatusTimeout:
             NSLog(@"接收超时");
@@ -83,21 +92,60 @@
                     NSLog(@"接收失败");
                     return;
                 }
-                if (code == kCMNoteModelTransferCode) {
+                if (code == CMNoteModelTransferCode) {
                     NSLog(@"笔记模型接收成功");
-                    //传输笔记的id和数据长度
-                    
-                } else if (code == kCMNoteMetaTransferCode) {
+                    //传输笔记附件的id和附件数据长度
+                    NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment.absoluteString];
+                    self.currentAttachmentSize = attachData.length;
+                    NSDictionary *dict = @{
+                        kCMNoteBookIdOfAttachment: self.currentNotebook.notebookID,
+                        kCMNoteBookSizeOfAttachment: @(self.currentAttachmentSize)
+                    };
+                    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+                    NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:jsonData withCode:CMNoteMetaTransferCode status:0];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:transmitData withTag:CMNoteMetaTransferCode];
+                } else if (code == CMNoteMetaTransferCode) {
                     NSLog(@"笔记的meta传输成功");
+                    NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment.absoluteString];
+                    NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:attachData withCode:CMNoteContentTransferCode status:0];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:transmitData withTag:CMNoteContentTransferCode];
                     //传输笔记内容
-                } else if (code == kCMNoteContentTransferCode) {
+                } else if (code == CMNoteContentTransferCode) {
                     NSLog(@"笔记的内容传输成功");
                     //传输下一个笔记本或者断开链接
+                    if (self.currentModelIndex + 1 >= self.notebooklist.count) {
+                        //已经全部传输完毕，关闭链接
+                        [CMDataSyncQRCodeTCPquickStarter stopConnection];
+                        return;
+                    }
+                    self.bigFileProgress = 0;
+                    self.currentModelIndex += 1;
+                    self.currentNotebook = self.notebooklist[self.currentModelIndex];
+                    NSData *modelData = [self.currentNotebook yy_modelToJSONData];
+                    NSData *dataWithHeader = [CMResolveProtocolTool appendHeaderOnData:modelData withCode:CMNoteModelTransferCode status:0];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:dataWithHeader withTag:CMNoteModelTransferCode];
                 }
                 
             }];
             break;
     }
 }
+
+- (void) sendNotebooks:(NSArray <NotebookModel *> *) noteBooklist {
+    if (!noteBooklist ||
+        !noteBooklist.firstObject ) {
+        return;
+    }
+    //发送第一个
+    self.notebooklist = noteBooklist;
+    self.currentModelIndex = 0;
+    self.currentNotebook = noteBooklist.firstObject;
+    NSData *modelData = [self.currentNotebook yy_modelToJSONData];
+    NSData *dataWithHeader = [CMResolveProtocolTool appendHeaderOnData:modelData withCode:CMNoteModelTransferCode status:0];
+    [CMDataSyncQRCodeTCPquickStarter sendData:dataWithHeader withTag:CMNoteModelTransferCode];
+}
+
+
+
 
 @end

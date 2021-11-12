@@ -11,6 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class NotebookModel;
+
 @interface SenderResolveProtocolManager : NSObject <CMSyncResolveProtocol>
 
 @property (nonatomic, assign, readonly) float bigFileProgress; //大文件发送进度,kvo
@@ -46,6 +48,11 @@ NS_ASSUME_NONNULL_BEGIN
                receiveLength:(NSUInteger) receivedLength
                          tag:(NSUInteger) tag
               transmitStatus:(CMSyncTransmitStatus) transmitStatus;
+
+
+/// 发送笔记列表
+/// @param noteBooklist 笔记列表
+- (void) sendNotebooks:(NSArray <NotebookModel *> *) noteBooklist;
 @end
 
 NS_ASSUME_NONNULL_END

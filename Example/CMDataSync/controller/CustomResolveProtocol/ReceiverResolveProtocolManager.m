@@ -19,8 +19,10 @@
 @property (nonatomic, copy, readwrite) NSString *statusStr; //连接状态,kvo
 @property (nonatomic, copy, readwrite) NSString *transmitStr; //传输状态,kvo
 
-@property (nonatomic, assign) NSInteger currentCode;
-@property (nonatomic, strong) NotebookModel *receiveModel;
+//Model record
+@property (nonatomic, assign) CMNoteTransferCode currentCode;
+@property (nonatomic, strong) NotebookModel *currentNotebook;
+@property (nonatomic, assign) NSUInteger currentAttachmentSize;
 @end
 
 @implementation ReceiverResolveProtocolManager
@@ -69,16 +71,20 @@
     self.transmitStr = [CMResolveProtocolTool convertTransmitStatus:transmitStatus];
     switch (transmitStatus) {
         case CMSyncTransmitStatusWaiting:
-            
             break;
         case CMSyncTransmitStatusTimeout:
             NSLog(@"接收超时");
             break;
         case CMSyncTransmitStatusSending:
+            //当前正在接收大文件，则显示进度；
+            if (self.currentCode == CMNoteMetaTransferCode) {
+                self.bigFileProgress = receivedLength / self.currentAttachmentSize;
+            }
             break;
         //TODO: 如果实际不会停，得重新想个逻辑
         case CMSyncTransmitStatusComplete:
             [CMResolveProtocolTool resolveIncomeData:buffer complete:^(UInt8 code, UInt8 status, NSData * _Nonnull receivedData) {
+                self.currentCode = code;
                 //没有收到数据的话
                 if (!receivedData) {
                     //返回接收失败
@@ -86,16 +92,40 @@
                     [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
                     return;
                 }
-                if (code == kCMNoteModelTransferCode) {
+                if (code == CMNoteModelTransferCode) {
                     NSLog(@"笔记模型接收");
-                    //传输笔记的id和数据长度
+                    self.currentNotebook = [NotebookModel yy_modelWithJSON:receivedData];
                     
-                } else if (code == kCMNoteMetaTransferCode) {
+                } else if (code == CMNoteMetaTransferCode) {
                     NSLog(@"笔记的meta接收");
-                    //传输笔记内容
-                } else if (code == kCMNoteContentTransferCode) {
+                    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:receivedData options:NSJSONReadingAllowFragments error:nil];
+                    if (![dict isKindOfClass:[NSDictionary class]]) {
+                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
+                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                        return;
+                    }
+                    NSString *notebookid = dict[kCMNoteBookIdOfAttachment];
+                    if (![self.currentNotebook.notebookID isEqualToString:notebookid]) {
+                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
+                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                        return;
+                    }
+                    self.currentAttachmentSize = [dict[kCMNoteBookSizeOfAttachment] integerValue];
+                   
+                } else if (code == CMNoteContentTransferCode) {
                     NSLog(@"笔记的内容接收");
-                    //传输下一个笔记本或者断开链接
+                    if (receivedData.length != self.currentAttachmentSize) {
+                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
+                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                        return;
+                    }
+                    NSURL *receiveAttachURL = self.currentNotebook.attachment;
+                    [[NSFileManager defaultManager] createFileAtPath:receiveAttachURL.absoluteString contents:receivedData attributes:nil];
+                    //TODO: 保存到数据库里
+                    NSLog(@"保存到数据库");
+                    //清空中间值
+                    self.currentNotebook = nil;
+                    self.currentAttachmentSize = 0;
                 }
                 //回复接收成功
                 NSData *responseSucceedData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:1];

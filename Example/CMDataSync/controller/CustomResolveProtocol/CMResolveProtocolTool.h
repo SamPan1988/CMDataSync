@@ -8,11 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <CMDataSync/CMDataSync.h>
-static const NSInteger kCMNoteModelTransferCode = 2;
-static const NSInteger kCMNoteMetaTransferCode = 3;
-static const NSInteger kCMNoteContentTransferCode = 4;
+
+typedef enum : NSUInteger {
+    CMNoteModelTransferCode = 2,
+    CMNoteMetaTransferCode = 3,
+    CMNoteContentTransferCode = 4,
+} CMNoteTransferCode;
 
 NS_ASSUME_NONNULL_BEGIN
+static NSString const *kCMNoteBookIdOfAttachment = @"kCMNoteBookIdForAttachMent";
+static NSString const *kCMNoteBookSizeOfAttachment = @"kCMNoteBookSizeOfAttachment";
 
 typedef void(^CMResolveCompletor)(UInt8 code, UInt8 status, NSData *receivedData);
 

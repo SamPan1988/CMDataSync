@@ -121,8 +121,11 @@
                         [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
                         return;
                     }
-                    NSURL *receiveAttachURL = self.currentNotebook.attachment;
-                    [[NSFileManager defaultManager] createFileAtPath:receiveAttachURL.absoluteString contents:receivedData attributes:nil];
+                    NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+                    NSURL *pathURL = [NSURL URLWithString:paths];
+                    [pathURL URLByAppendingPathComponent:self.currentFileName];
+                    self.currentNotebook.attachment = pathURL;
+                    [[NSFileManager defaultManager] createFileAtPath:pathURL.absoluteString contents:receivedData attributes:nil];
                     //TODO: 保存到数据库里
                     NSLog(@"保存到数据库");
                     //清空中间值

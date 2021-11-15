@@ -30,6 +30,11 @@
 		DD8259812733C55600056724 /* CMScanQRCodeVC.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8259802733C55600056724 /* CMScanQRCodeVC.m */; };
 		DD82598A2733CEF200056724 /* SelectNotebookViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DD8259882733CEF200056724 /* SelectNotebookViewController.m */; };
 		DD82598E2733CF7A00056724 /* UIColor+ext.m in Sources */ = {isa = PBXBuildFile; fileRef = DD82598D2733CF7A00056724 /* UIColor+ext.m */; };
+		F42125D52741FB5900083D7C /* 04 The Louvre.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F42125D02741FB5900083D7C /* 04 The Louvre.m4a */; };
+		F42125D62741FB5900083D7C /* 07 Sober II (Melodrama).m4a in Resources */ = {isa = PBXBuildFile; fileRef = F42125D12741FB5900083D7C /* 07 Sober II (Melodrama).m4a */; };
+		F42125D72741FB5900083D7C /* 10 Liability (Reprise).m4a in Resources */ = {isa = PBXBuildFile; fileRef = F42125D22741FB5900083D7C /* 10 Liability (Reprise).m4a */; };
+		F42125D82741FB5900083D7C /* 05 Liability.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F42125D32741FB5900083D7C /* 05 Liability.m4a */; };
+		F42125D92741FB5900083D7C /* 03 Homemade Dynamite.m4a in Resources */ = {isa = PBXBuildFile; fileRef = F42125D42741FB5900083D7C /* 03 Homemade Dynamite.m4a */; };
 		F4CA63112738FA53006C7B12 /* SenderResolveProtocolManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */; };
 		F4CA63142739012E006C7B12 /* ReceiverResolveProtocolManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA63132739012E006C7B12 /* ReceiverResolveProtocolManager.m */; };
 		F4CA6326273A17F6006C7B12 /* CMResolveProtocolTool.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CA6325273A17F6006C7B12 /* CMResolveProtocolTool.m */; };
@@ -87,6 +92,11 @@
 		DD82598C2733CF7A00056724 /* UIColor+ext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+ext.h"; sourceTree = "<group>"; };
 		DD82598D2733CF7A00056724 /* UIColor+ext.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+ext.m"; sourceTree = "<group>"; };
 		F3F01012AB8F4D479085E5D3 /* Pods-CMDataSync_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CMDataSync_Example.debug.xcconfig"; path = "Target Support Files/Pods-CMDataSync_Example/Pods-CMDataSync_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		F42125D02741FB5900083D7C /* 04 The Louvre.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "04 The Louvre.m4a"; sourceTree = "<group>"; };
+		F42125D12741FB5900083D7C /* 07 Sober II (Melodrama).m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "07 Sober II (Melodrama).m4a"; sourceTree = "<group>"; };
+		F42125D22741FB5900083D7C /* 10 Liability (Reprise).m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "10 Liability (Reprise).m4a"; sourceTree = "<group>"; };
+		F42125D32741FB5900083D7C /* 05 Liability.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "05 Liability.m4a"; sourceTree = "<group>"; };
+		F42125D42741FB5900083D7C /* 03 Homemade Dynamite.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "03 Homemade Dynamite.m4a"; sourceTree = "<group>"; };
 		F4CA630F2738FA53006C7B12 /* SenderResolveProtocolManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SenderResolveProtocolManager.h; sourceTree = "<group>"; };
 		F4CA63102738FA53006C7B12 /* SenderResolveProtocolManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SenderResolveProtocolManager.m; sourceTree = "<group>"; };
 		F4CA63122739012E006C7B12 /* ReceiverResolveProtocolManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReceiverResolveProtocolManager.h; sourceTree = "<group>"; };
@@ -163,6 +173,7 @@
 				DD8259722733B84800056724 /* model */,
 				6003F59C195388D20070C39A /* CMAppDelegate.h */,
 				6003F59D195388D20070C39A /* CMAppDelegate.m */,
+				F42125CF2741FAD100083D7C /* exampleData */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* CMViewController.h */,
 				6003F5A6195388D20070C39A /* CMViewController.m */,
@@ -290,6 +301,18 @@
 			path = catagory;
 			sourceTree = "<group>";
 		};
+		F42125CF2741FAD100083D7C /* exampleData */ = {
+			isa = PBXGroup;
+			children = (
+				F42125D42741FB5900083D7C /* 03 Homemade Dynamite.m4a */,
+				F42125D02741FB5900083D7C /* 04 The Louvre.m4a */,
+				F42125D32741FB5900083D7C /* 05 Liability.m4a */,
+				F42125D12741FB5900083D7C /* 07 Sober II (Melodrama).m4a */,
+				F42125D22741FB5900083D7C /* 10 Liability (Reprise).m4a */,
+			);
+			path = exampleData;
+			sourceTree = "<group>";
+		};
 		F4CA630E2738FA28006C7B12 /* CustomResolveProtocol */ = {
 			isa = PBXGroup;
 			children = (
@@ -388,8 +411,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
+				F42125D72741FB5900083D7C /* 10 Liability (Reprise).m4a in Resources */,
+				F42125D92741FB5900083D7C /* 03 Homemade Dynamite.m4a in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				DD8259782733BEA200056724 /* data.txt in Resources */,
+				F42125D62741FB5900083D7C /* 07 Sober II (Melodrama).m4a in Resources */,
+				F42125D82741FB5900083D7C /* 05 Liability.m4a in Resources */,
+				F42125D52741FB5900083D7C /* 04 The Louvre.m4a in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 			);

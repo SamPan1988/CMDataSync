@@ -28,7 +28,7 @@
 @implementation SenderResolveProtocolManager
 
 + (instancetype) shared {
-    dispatch_once_t CMSenderConnectToken;
+    static dispatch_once_t CMSenderConnectToken;
     static SenderResolveProtocolManager *shared;
     dispatch_once(&CMSenderConnectToken, ^{
         shared = [[SenderResolveProtocolManager alloc] init];

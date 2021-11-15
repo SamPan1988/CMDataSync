@@ -29,7 +29,7 @@
 @implementation ReceiverResolveProtocolManager
 
 + (instancetype) shared {
-    dispatch_once_t ReceiverConnectToken;
+    static dispatch_once_t ReceiverConnectToken;
     static ReceiverResolveProtocolManager *shared;
     dispatch_once(&ReceiverConnectToken, ^{
         shared = [[ReceiverResolveProtocolManager alloc] init];

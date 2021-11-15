@@ -31,6 +31,7 @@
 }
 
 - (void)initUI {
+    [self createExampleData];
     UIView *tipsView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, GH_WIDTH, 40)];
     tipsView.backgroundColor = [UIColor colorWithRGB:0xF4F4F4];
     [self.view addSubview:tipsView];
@@ -173,6 +174,31 @@
 
 -(void)dealloc {
     NSLog(@"dealloc %@",NSStringFromClass(self.class));
+}
+
+- (void) createExampleData {
+    NSMutableArray *noteList = [[NSMutableArray alloc] init];
+    NSArray *nameList = @[@"03 Homemade Dynamite.m4a",@"04 The Louvre",@"05 Liability.m4a",@"07 Sober II (Melodrama).m4a",@"10 Liability (Reprise).m4a"];
+    for (NSUInteger i = 0; i < nameList.count; i++) {
+        NotebookModel *note = [self getNoteModelByName:nameList[i]];
+        [noteList addObject:note];
+    }
+}
+
+- (NotebookModel *) getNoteModelByName:(NSString *) name {
+    NotebookModel *noteModel = [[NotebookModel alloc] init];
+    noteModel.name = name;
+    noteModel.notebookID = [[NSUUID UUID] UUIDString];
+    NSURL *attachURL = [[NSBundle mainBundle] URLForResource:name withExtension:nil subdirectory:@"exampleData"];
+    NSData *attachData = [NSData dataWithContentsOfFile:attachURL.absoluteString];
+    NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSURL *pathURL = [NSURL URLWithString:paths];
+    [pathURL URLByAppendingPathComponent:name];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:pathURL.absoluteString]) {
+        [[NSFileManager defaultManager] createFileAtPath:pathURL.absoluteString contents:attachData attributes:nil];
+    }
+    noteModel.attachment = pathURL;
+    return noteModel;
 }
 
 @end

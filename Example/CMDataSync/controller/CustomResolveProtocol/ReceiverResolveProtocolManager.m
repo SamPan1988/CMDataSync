@@ -22,6 +22,7 @@
 //Model record
 @property (nonatomic, assign) CMNoteTransferCode currentCode;
 @property (nonatomic, strong) NotebookModel *currentNotebook;
+@property (nonatomic, copy, readwrite) NSString *currentFileName;
 @property (nonatomic, assign) NSUInteger currentAttachmentSize;
 @end
 
@@ -111,6 +112,7 @@
                         return;
                     }
                     self.currentAttachmentSize = [dict[kCMNoteBookSizeOfAttachment] integerValue];
+                    self.currentFileName = dict[kCMNoteBookNameOfAttachment];
                    
                 } else if (code == CMNoteContentTransferCode) {
                     NSLog(@"笔记的内容接收");

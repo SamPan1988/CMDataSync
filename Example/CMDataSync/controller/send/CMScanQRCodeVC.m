@@ -15,13 +15,14 @@ static void *kCMSenderResolveStatusContext = &kCMSenderResolveStatusContext;
 static void *kCMSenderResolveStatusStringContext = &kCMSenderResolveStatusStringContext;
 static void *kCMSenderResolveProgressContext = &kCMSenderResolveProgressContext;
 static void *kCMSenderResolveTransmitContext = &kCMSenderResolveTransmitContext;
+static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 
 @interface CMScanQRCodeVC ()<SelectNotebookViewDelegate>
 
 @property (strong, nonatomic) UIView *boxView;
 @property (nonatomic) BOOL isReading;
 @property (strong, nonatomic) CALayer *scanLayer;
-
+@property (strong, nonatomic) UILabel *fileNameLabel;
 @property (strong, nonatomic) UILabel *statusLabel;
 @property (strong, nonatomic) UILabel *transmitLabel;
 @property (strong, nonatomic) UILabel *progeressLabel;
@@ -50,6 +51,13 @@ static void *kCMSenderResolveTransmitContext = &kCMSenderResolveTransmitContext;
     return _progeressLabel;
 }
 
+- (UILabel *)fileNameLabel {
+    if (!_fileNameLabel) {
+        _fileNameLabel = [[UILabel alloc] init];
+    }
+    return _fileNameLabel;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -73,11 +81,15 @@ static void *kCMSenderResolveTransmitContext = &kCMSenderResolveTransmitContext;
     [self.view addSubview:self.transmitLabel];
     self.transmitLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 60);
     
+    [self.view addSubview:self.fileNameLabel];
+    self.fileNameLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 90);
+    
     SenderResolveProtocolManager *sender = [SenderResolveProtocolManager shared];
     [ sender addObserver:self forKeyPath:NSStringFromSelector(@selector(status)) options:NSKeyValueObservingOptionNew context:kCMSenderResolveStatusContext];
     [ sender addObserver:self forKeyPath:NSStringFromSelector(@selector(statusStr)) options:NSKeyValueObservingOptionNew context:kCMSenderResolveStatusStringContext];
     [sender addObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) options:NSKeyValueObservingOptionNew context:kCMSenderResolveProgressContext];
     [sender addObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) options:NSKeyValueObservingOptionNew context:kCMSenderResolveTransmitContext];
+    [sender addObserver:self forKeyPath:NSStringFromSelector(@selector(currentFileName)) options:NSKeyValueObservingOptionNew context:kCMSenderResolveFileNameContext];
 }
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -95,6 +107,7 @@ static void *kCMSenderResolveTransmitContext = &kCMSenderResolveTransmitContext;
     [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) context:kCMSenderResolveProgressContext];
     [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(status)) context:kCMSenderResolveStatusContext];
     [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) context:kCMSenderResolveTransmitContext];
+    [sender removeObserver:self forKeyPath:NSStringFromSelector(@selector(currentFileName)) context:kCMSenderResolveFileNameContext];
 }
 
 #pragma mark - 取消按钮
@@ -127,13 +140,17 @@ static void *kCMSenderResolveTransmitContext = &kCMSenderResolveTransmitContext;
     } else if (context == kCMSenderResolveTransmitContext) {
         NSString *transmitStatusStr = change[NSKeyValueChangeNewKey];
         self.transmitLabel.text = transmitStatusStr;
+    } else if (context == kCMSenderResolveFileNameContext) {
+        NSString *fileName = change[NSKeyValueChangeNewKey];
+        self.fileNameLabel.text = fileName;
     }
 }
 
 -(void)sendDataTable:(SelectNotebookViewController *)table
    selectedNotebooks:(NSArray<NotebookModel *> *)selectedNotebooks {
     //选择传输的字典模型
-    
+    SenderResolveProtocolManager *sender = [SenderResolveProtocolManager shared];
+    [sender sendNotebooks:selectedNotebooks];
     //关闭选择页面
     UIViewController *noteVC = self.childViewControllers.firstObject;
     [noteVC willMoveToParentViewController:nil];

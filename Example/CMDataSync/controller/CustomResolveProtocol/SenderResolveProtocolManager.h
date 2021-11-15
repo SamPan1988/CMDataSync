@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) CMSyncConnectStatus status; //连接状态,kvo
 @property (nonatomic, copy, readonly) NSString *statusStr; //连接状态,kvo
 @property (nonatomic, copy, readonly) NSString *transmitStr; //传输状态,kvo
+@property (nonatomic, copy, readonly) NSString *currentFileName;
 
 + (instancetype) shared;
 

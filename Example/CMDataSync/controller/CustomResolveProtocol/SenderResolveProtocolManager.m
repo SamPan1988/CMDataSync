@@ -17,6 +17,7 @@
 @property (nonatomic, assign, readwrite) CMSyncConnectStatus status; //连接状态,kvo
 @property (nonatomic, copy, readwrite) NSString *statusStr; //连接状态,kvo
 @property (nonatomic, copy, readwrite) NSString *transmitStr; //传输状态,kvo
+@property (nonatomic, copy, readwrite) NSString *currentFileName;
 //Model record
 @property (nonatomic, strong) NSArray <NotebookModel *> *notebooklist;
 @property (nonatomic, assign) NSUInteger currentModelIndex;
@@ -96,10 +97,13 @@
                     NSLog(@"笔记模型接收成功");
                     //传输笔记附件的id和附件数据长度
                     NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment.absoluteString];
+                   NSString *fileName = [[self.currentNotebook.attachment.absoluteString lastPathComponent] stringByDeletingPathExtension];
+                    self.currentFileName = fileName;
                     self.currentAttachmentSize = attachData.length;
                     NSDictionary *dict = @{
                         kCMNoteBookIdOfAttachment: self.currentNotebook.notebookID,
-                        kCMNoteBookSizeOfAttachment: @(self.currentAttachmentSize)
+                        kCMNoteBookSizeOfAttachment: @(self.currentAttachmentSize),
+                        kCMNoteBookNameOfAttachment: fileName
                     };
                     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
                     NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:jsonData withCode:CMNoteMetaTransferCode status:0];

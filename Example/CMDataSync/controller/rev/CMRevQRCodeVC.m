@@ -14,12 +14,14 @@ static void *kCMReceiverResolveStatusContext = &kCMReceiverResolveStatusContext;
 static void *kCMReceiverResolveStatusStringContext = &kCMReceiverResolveStatusStringContext;
 static void *kCMReceiverResolveProgressContext = &kCMReceiverResolveProgressContext;
 static void *kCMReceiverResolveTransmitContext = &kCMReceiverResolveTransmitContext;
+static void *kCMReceiverResolveFileContext = &kCMReceiverResolveFileContext;
 
 @interface CMRevQRCodeVC ()
 @property (nonatomic, strong) UIImageView *qrCodeImageView;
 @property (nonatomic, strong) UILabel *statusLabel;
 @property (nonatomic, strong) UILabel *transmitStatusLabel;
 @property (nonatomic, strong) UILabel *progressLabel;
+@property (nonatomic, strong) UILabel *fileNameLabel;
 @end
 
 @implementation CMRevQRCodeVC
@@ -43,6 +45,13 @@ static void *kCMReceiverResolveTransmitContext = &kCMReceiverResolveTransmitCont
         _progressLabel = [[UILabel alloc] init];
     }
     return _progressLabel;
+}
+
+- (UILabel *)fileNameLabel {
+    if (!_fileNameLabel) {
+        _fileNameLabel = [[UILabel alloc] init];
+    }
+    return _fileNameLabel;
 }
 
 - (void)viewDidLoad {
@@ -72,11 +81,15 @@ static void *kCMReceiverResolveTransmitContext = &kCMReceiverResolveTransmitCont
     [self.view addSubview:self.transmitStatusLabel];
     self.transmitStatusLabel.hidden = YES;
     self.transmitStatusLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 100);
+    [self.view addSubview:self.fileNameLabel];
+    self.fileNameLabel.hidden = YES;
+    self.fileNameLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT/2 + 150);
     
     [ receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(status)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveStatusContext];
     [ receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(statusStr)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveStatusStringContext];
     [receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveProgressContext];
     [receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveTransmitContext];
+    [receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(currentFileName)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveFileContext];
 }
 
 - (void) observeValueForKeyPath:(NSString *)keyPath
@@ -91,6 +104,7 @@ static void *kCMReceiverResolveTransmitContext = &kCMReceiverResolveTransmitCont
             self.statusLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 80);
             self.progressLabel.hidden = NO;
             self.transmitStatusLabel.hidden = NO;
+            self.fileNameLabel.hidden = NO;
         }
     }
     else if (context == kCMReceiverResolveStatusStringContext) {
@@ -103,6 +117,9 @@ static void *kCMReceiverResolveTransmitContext = &kCMReceiverResolveTransmitCont
     } else if (context == kCMReceiverResolveTransmitContext) {
         NSString *transmitStatusStr = change[NSKeyValueChangeNewKey];
         self.transmitStatusLabel.text = transmitStatusStr;
+    } else if (context == kCMReceiverResolveFileContext) {
+        NSString *fileName = change[NSKeyValueChangeNewKey];
+        self.fileNameLabel.text = fileName;
     }
 }
 
@@ -112,6 +129,7 @@ static void *kCMReceiverResolveTransmitContext = &kCMReceiverResolveTransmitCont
     [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) context:kCMReceiverResolveProgressContext];
     [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(status)) context:kCMReceiverResolveStatusContext];
     [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) context:kCMReceiverResolveTransmitContext];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(currentFileName)) context:kCMReceiverResolveFileContext];
 }
 
 

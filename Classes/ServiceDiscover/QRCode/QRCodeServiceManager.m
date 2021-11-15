@@ -52,6 +52,7 @@
 - (void) stopScanning {
     if (self.session.isRunning) {
         [self.session stopRunning];
+        [self.preview removeFromSuperlayer];
     }
 }
 
@@ -103,6 +104,7 @@
     if ([metadataObjects count] > 0 ) {
         // 停止扫描
         [ _session stopRunning ];
+        [_preview removeFromSuperlayer];
         AVMetadataMachineReadableCodeObject * metadataObject = [metadataObjects objectAtIndex:0];
         stringValue = metadataObject.stringValue;
         if (self.scanComplete) {

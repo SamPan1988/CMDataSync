@@ -119,31 +119,34 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
                        ofObject:(id)object
                          change:(NSDictionary<NSKeyValueChangeKey,id> *)change
                         context:(void *)context {
-    if (context == kCMSenderResolveStatusContext) {
-        CMSyncConnectStatus status = [change[NSKeyValueChangeNewKey] integerValue];
-        if (status == CMSyncConnectStatusConnected) {
-            //链接成功，跳转到选择笔记本页面
-            SelectNotebookViewController *noteController = [[SelectNotebookViewController alloc] init];
-            noteController.delegate = self;
-            [self addChildViewController:noteController];
-            [self.view addSubview:noteController.view];
-            [noteController didMoveToParentViewController:self];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (context == kCMSenderResolveStatusContext) {
+            CMSyncConnectStatus status = [change[NSKeyValueChangeNewKey] integerValue];
+            if (status == CMSyncConnectStatusConnected) {
+                [CMDataSyncQRCodeTCPquickStarter stopScanning];
+                //链接成功，跳转到选择笔记本页面
+                SelectNotebookViewController *noteController = [[SelectNotebookViewController alloc] init];
+                noteController.delegate = self;
+                [self addChildViewController:noteController];
+                [self.view addSubview:noteController.view];
+                [noteController didMoveToParentViewController:self];
+            }
         }
-    }
-    else if (context == kCMSenderResolveStatusStringContext) {
-        NSString *statusStr = change[NSKeyValueChangeNewKey];
-        self.statusLabel.text = statusStr;
-    } else if (context == kCMSenderResolveProgressContext) {
-        float progress = [change[NSKeyValueChangeNewKey] floatValue];
-        NSString *progressStr = [NSString stringWithFormat:@"传输进度:%.2f",progress];
-        self.progeressLabel.text = progressStr;
-    } else if (context == kCMSenderResolveTransmitContext) {
-        NSString *transmitStatusStr = change[NSKeyValueChangeNewKey];
-        self.transmitLabel.text = transmitStatusStr;
-    } else if (context == kCMSenderResolveFileNameContext) {
-        NSString *fileName = change[NSKeyValueChangeNewKey];
-        self.fileNameLabel.text = fileName;
-    }
+        else if (context == kCMSenderResolveStatusStringContext) {
+            NSString *statusStr = change[NSKeyValueChangeNewKey];
+            self.statusLabel.text = statusStr;
+        } else if (context == kCMSenderResolveProgressContext) {
+            float progress = [change[NSKeyValueChangeNewKey] floatValue];
+            NSString *progressStr = [NSString stringWithFormat:@"传输进度:%.2f",progress];
+            self.progeressLabel.text = progressStr;
+        } else if (context == kCMSenderResolveTransmitContext) {
+            NSString *transmitStatusStr = change[NSKeyValueChangeNewKey];
+            self.transmitLabel.text = transmitStatusStr;
+        } else if (context == kCMSenderResolveFileNameContext) {
+            NSString *fileName = change[NSKeyValueChangeNewKey];
+            self.fileNameLabel.text = fileName;
+        }
+    });
 }
 
 -(void)sendDataTable:(SelectNotebookViewController *)table

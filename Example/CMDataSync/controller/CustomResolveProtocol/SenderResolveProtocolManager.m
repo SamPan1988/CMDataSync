@@ -96,8 +96,8 @@
                 if (code == CMNoteModelTransferCode) {
                     NSLog(@"笔记模型接收成功");
                     //传输笔记附件的id和附件数据长度
-                    NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment.absoluteString];
-                   NSString *fileName = [[self.currentNotebook.attachment.absoluteString lastPathComponent] stringByDeletingPathExtension];
+                    NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment];
+                   NSString *fileName = [[self.currentNotebook.attachment lastPathComponent] stringByDeletingPathExtension];
                     self.currentFileName = fileName;
                     self.currentAttachmentSize = attachData.length;
                     NSDictionary *dict = @{
@@ -110,7 +110,7 @@
                     [CMDataSyncQRCodeTCPquickStarter sendData:transmitData withTag:CMNoteMetaTransferCode];
                 } else if (code == CMNoteMetaTransferCode) {
                     NSLog(@"笔记的meta传输成功");
-                    NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment.absoluteString];
+                    NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment];
                     NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:attachData withCode:CMNoteContentTransferCode status:0];
                     [CMDataSyncQRCodeTCPquickStarter sendData:transmitData withTag:CMNoteContentTransferCode];
                     //传输笔记内容

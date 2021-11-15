@@ -31,23 +31,26 @@
 }
 
 - (void)initUI {
-    [self createExampleData];
+    self.view.backgroundColor = [UIColor whiteColor];
     UIView *tipsView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, GH_WIDTH, 40)];
     tipsView.backgroundColor = [UIColor colorWithRGB:0xF4F4F4];
     [self.view addSubview:tipsView];
     
-    
-    UILabel *tipsLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, 0, GH_WIDTH-10, 40)];
+    CGFloat originY = CGRectGetMaxY(self.navigationController.navigationBar.frame);
+    UILabel *tipsLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, originY, GH_WIDTH-10, 40)];
     tipsLabel.text = @"请确认发送的数据是否相同，相同的数据将会覆盖。";
     tipsLabel.numberOfLines = 2;
     tipsLabel.font = [UIFont systemFontOfSize:12];
     [tipsView addSubview:tipsLabel];
     
-    self.mainTableView.frame = CGRectMake(0, 40, GH_WIDTH, GH_HEIGHT - 40 - 64);
+    CGFloat tableY = CGRectGetMaxY(tipsLabel.frame);
+    self.mainTableView.frame = CGRectMake(0, tableY, GH_WIDTH, GH_HEIGHT - tableY - 80);
+    [self.mainTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"cellc"];
+    
     [self.view addSubview:self.mainTableView];
     
-    
-    UIView *bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, GH_HEIGHT - 64 - 80, GH_WIDTH, 80)];
+    CGFloat bottomY = CGRectGetMaxY(self.mainTableView.frame);
+    UIView *bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, bottomY, GH_WIDTH, 80)];
     bottomView.backgroundColor = [UIColor colorWithRGB:0xF3F3F3];
     [self.view addSubview:bottomView];
     
@@ -59,13 +62,15 @@
     [bottomView addSubview:_selectAllButton];
     
     _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _selectAllButton.frame = CGRectMake(GH_WIDTH/2, 0, GH_WIDTH/2, 40);
+    _sendButton.frame = CGRectMake(GH_WIDTH/2, 0, GH_WIDTH/2, 40);
     [_sendButton setTitle:@"发送" forState:UIControlStateNormal];
     [_sendButton setTitleColor:[UIColor colorWithRGB:0x02C2A0] forState:UIControlStateNormal];
     [_sendButton addTarget:self action:@selector(sendButtonAction) forControlEvents:UIControlEventTouchUpInside];
     [_sendButton setImage:[UIImage imageNamed:@"sync_notebook_send"] forState:UIControlStateNormal];
     _sendButton.titleEdgeInsets = UIEdgeInsetsMake(0, 7, 0, 0);
     [bottomView addSubview:_sendButton];
+    
+    [self createExampleData];
 }
 
 -(void)selectAllAction {
@@ -106,19 +111,18 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cellc"];
     UIImageView *accessView;
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cellc"];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        accessView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sync_notebook_unselect"]];
-        accessView.tag = 888;
-        cell.accessoryView = accessView;
+
+    cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cellc"];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    accessView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"sync_notebook_unselect"]];
+    accessView.tag = 888;
+    cell.backgroundColor = [UIColor whiteColor];
+    cell.accessoryView = accessView;
         
-    } else {
-        accessView = (UIImageView *)[cell accessoryView];
-    }
     
     NotebookModel *model = _notebookListData[indexPath.row];
     cell.textLabel.text = model.name;
+    cell.textLabel.textColor = [UIColor blackColor];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     if ([self.selectedIndexPaths containsObject:indexPath]) {
         accessView.image = [UIImage imageNamed: @"sync_notebook_selected"];
@@ -153,6 +157,7 @@
         _mainTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         _mainTableView.delegate = self;
         _mainTableView.dataSource = self;
+        _mainTableView.backgroundColor = [UIColor whiteColor];
     }
     return _mainTableView;
 }
@@ -183,6 +188,7 @@
         NotebookModel *note = [self getNoteModelByName:nameList[i]];
         [noteList addObject:note];
     }
+    self.notebookListData = noteList;
 }
 
 - (NotebookModel *) getNoteModelByName:(NSString *) name {
@@ -197,7 +203,7 @@
     if (![[NSFileManager defaultManager] fileExistsAtPath:pathURL.absoluteString]) {
         [[NSFileManager defaultManager] createFileAtPath:pathURL.absoluteString contents:attachData attributes:nil];
     }
-    noteModel.attachment = pathURL;
+    noteModel.attachment = pathURL.absoluteString;
     return noteModel;
 }
 

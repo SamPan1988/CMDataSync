@@ -96,31 +96,33 @@ static void *kCMReceiverResolveFileContext = &kCMReceiverResolveFileContext;
                        ofObject:(id)object
                          change:(NSDictionary<NSKeyValueChangeKey,id> *)change
                         context:(void *)context {
-    if (context == kCMReceiverResolveStatusContext) {
-        CMSyncConnectStatus status = [change[NSKeyValueChangeNewKey] integerValue];
-        if (status == CMSyncConnectStatusConnected) {
-            //链接成功，隐藏二维码
-            self.qrCodeImageView.hidden = YES;
-            self.statusLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 80);
-            self.progressLabel.hidden = NO;
-            self.transmitStatusLabel.hidden = NO;
-            self.fileNameLabel.hidden = NO;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (context == kCMReceiverResolveStatusContext) {
+            CMSyncConnectStatus status = [change[NSKeyValueChangeNewKey] integerValue];
+            if (status == CMSyncConnectStatusConnected) {
+                //链接成功，隐藏二维码
+                self.qrCodeImageView.hidden = YES;
+                self.statusLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 80);
+                self.progressLabel.hidden = NO;
+                self.transmitStatusLabel.hidden = NO;
+                self.fileNameLabel.hidden = NO;
+            }
         }
-    }
-    else if (context == kCMReceiverResolveStatusStringContext) {
-        NSString *statusStr = change[NSKeyValueChangeNewKey];
-        self.statusLabel.text = statusStr;
-    } else if (context == kCMReceiverResolveProgressContext) {
-        float progress = [change[NSKeyValueChangeNewKey] floatValue];
-        NSString *progressStr = [NSString stringWithFormat:@"传输进度:%.2f",progress];
-        self.progressLabel.text = progressStr;
-    } else if (context == kCMReceiverResolveTransmitContext) {
-        NSString *transmitStatusStr = change[NSKeyValueChangeNewKey];
-        self.transmitStatusLabel.text = transmitStatusStr;
-    } else if (context == kCMReceiverResolveFileContext) {
-        NSString *fileName = change[NSKeyValueChangeNewKey];
-        self.fileNameLabel.text = fileName;
-    }
+        else if (context == kCMReceiverResolveStatusStringContext) {
+            NSString *statusStr = change[NSKeyValueChangeNewKey];
+            self.statusLabel.text = statusStr;
+        } else if (context == kCMReceiverResolveProgressContext) {
+            float progress = [change[NSKeyValueChangeNewKey] floatValue];
+            NSString *progressStr = [NSString stringWithFormat:@"传输进度:%.2f",progress];
+            self.progressLabel.text = progressStr;
+        } else if (context == kCMReceiverResolveTransmitContext) {
+            NSString *transmitStatusStr = change[NSKeyValueChangeNewKey];
+            self.transmitStatusLabel.text = transmitStatusStr;
+        } else if (context == kCMReceiverResolveFileContext) {
+            NSString *fileName = change[NSKeyValueChangeNewKey];
+            self.fileNameLabel.text = fileName;
+        }
+    });
 }
 
 - (void)dealloc {

@@ -12,53 +12,56 @@ const static NSUInteger kCMReserveHeaderLength = 8;
 @implementation CMResolveProtocolTool
 
 + (NSData *) appendHeaderOnData:(NSData * _Nullable) data withCode:(UInt8) code status:(UInt8) status {
-    NSData *resultData;
-    NSUInteger len = [data length] <= 0 ? 1 : [data length];
-    Byte *byteData = (Byte*)malloc(len);
-    if (data) {
-        memcpy(byteData, [data bytes], len);
-    }
-    Byte byteResultData[len + kCMReserveHeaderLength];
-    for (NSInteger i = 0; i < len + kCMReserveHeaderLength; i++) {
+    NSMutableData *resultData = [[NSMutableData alloc] init];
+    Byte header[kCMReserveHeaderLength];
+    for (NSUInteger i = 0; i < kCMReserveHeaderLength; i++) {
         if (i == 0) {
-            byteResultData[i] = code;
+            header[i] = code;
         } else if (i == 1) {
-            byteResultData[i] = status;
+            header[i] = status;
         } else if (i < kCMReserveHeaderLength) {
-            byteResultData[i] = 0;
-        } else if(data) {
-            byteResultData[i] = byteData[i - kCMReserveHeaderLength];
+            header[i] = 0;
         }
     }
-    resultData = [NSData dataWithBytes:byteResultData length:sizeof(byteResultData)];
-    free(byteData);
+    [resultData appendBytes:&header length:kCMReserveHeaderLength];
+    if (data && [data length] > 0) {
+        NSUInteger len = [data length];
+        Byte *byteData = (Byte *) malloc(len);
+        [data getBytes:byteData length:len];
+        [resultData appendBytes:byteData length:len];
+        free(byteData);
+    }
     return resultData;
 }
 
 + (void) resolveIncomeData:(NSData *) data complete:(CMResolveCompletor) completor {
     UInt8 code = 0;
     UInt8 status = 0;
-    NSData *resultData = nil;
-    NSUInteger len = [data length];
-    Byte *byteData = (Byte*)malloc(len);
-    NSUInteger resultDataSize = len - kCMReserveHeaderLength <= 0 ? 1 : len - kCMReserveHeaderLength;
-    Byte resultByteData[resultDataSize];
-    memcpy(byteData, [data bytes], len);
-    for (NSInteger i = 0; i < len; i++) {
-        if (i == 0) {
-            code = byteData[i];
-        } else if (i == 1) {
-            status = byteData[i];
-        } else if (i < kCMReserveHeaderLength) {
-            continue;
-        } else if (len - kCMReserveHeaderLength > 0){
-            resultByteData[i - kCMReserveHeaderLength] = byteData[i];
-        }
+    if (!data) {
+        completor(code,status,nil);
+        return;
     }
-    if (len - kCMReserveHeaderLength > 0) {
-        resultData = [NSData dataWithBytes:resultByteData length:resultDataSize];
+ 
+    NSUInteger len = data.length;
+    UInt8 *codeBuffer = malloc(1);
+    [data getBytes:(void *) codeBuffer range:NSMakeRange(0, 1)];
+    code = *codeBuffer;
+    free(codeBuffer);
+    
+    UInt8 *statusBuffer = malloc(1);
+    [data getBytes:(void *) statusBuffer range:NSMakeRange(1, 1)];
+    status = *statusBuffer;
+    free(statusBuffer);
+    
+    NSInteger resultDataLen = len - kCMReserveHeaderLength;
+    if (resultDataLen <= 0) {
+        completor(code,status,nil);
+        return;
     }
-    free(byteData);
+    void *resultDataBuffer = malloc(resultDataLen);
+    [data getBytes:resultDataBuffer range:NSMakeRange(kCMReserveHeaderLength, resultDataLen)];
+    NSData *resultData = [[NSData alloc] initWithBytes:resultDataBuffer length:resultDataLen];
+    free(resultDataBuffer);
     completor(code, status, resultData);
 }
 

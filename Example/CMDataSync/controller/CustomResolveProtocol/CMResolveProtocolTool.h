@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^CMResolveCompletor)(UInt8 code, UInt8 status, NSData *receivedData);
+typedef void(^CMResolveCompletor)(UInt8 code, UInt8 status, NSData  * _Nullable receivedData);
 
 @interface CMResolveProtocolTool : NSObject
 

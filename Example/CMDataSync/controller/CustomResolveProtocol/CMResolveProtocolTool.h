@@ -20,7 +20,7 @@ static NSString const *kCMNoteBookIdOfAttachment = @"kCMNoteBookIdForAttachMent"
 static NSString const *kCMNoteBookSizeOfAttachment = @"kCMNoteBookSizeOfAttachment";
 static NSString const *kCMNoteBookNameOfAttachment = @"kCMNoteBookNameOfAttachment";
 
-typedef void(^CMResolveCompletor)(UInt8 code, UInt8 status, NSData *receivedData);
+typedef void(^CMResolveCompletor)(UInt8 code, UInt8 status, NSData  * _Nullable receivedData);
 
 @interface CMResolveProtocolTool : NSObject
 

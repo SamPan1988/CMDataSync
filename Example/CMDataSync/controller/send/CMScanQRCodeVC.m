@@ -30,9 +30,13 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 
 @implementation CMScanQRCodeVC
 
++ (CGRect) labelSize {
+    return CGRectMake(0, 0, 250, 50);
+}
+
 - (UILabel *)statusLabel {
     if (!_statusLabel) {
-        _statusLabel = [[UILabel alloc] init];
+        _statusLabel = [[UILabel alloc] initWithFrame:[CMScanQRCodeVC labelSize]];
         _statusLabel.textColor = [UIColor blackColor];
     }
     return _statusLabel;
@@ -40,7 +44,7 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 
 - (UILabel *) transmitLabel {
     if (!_transmitLabel) {
-        _transmitLabel = [[UILabel alloc] init];
+        _transmitLabel = [[UILabel alloc] initWithFrame:[CMScanQRCodeVC labelSize]];
         _transmitLabel.textColor = [UIColor blackColor];
     }
     return _transmitLabel;
@@ -48,7 +52,7 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 
 - (UILabel *) progeressLabel {
     if (!_progeressLabel) {
-        _progeressLabel = [[UILabel alloc] init];
+        _progeressLabel = [[UILabel alloc] initWithFrame:[CMScanQRCodeVC labelSize]];
         _progeressLabel.textColor = [UIColor blackColor];
     }
     return _progeressLabel;
@@ -56,7 +60,7 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 
 - (UILabel *)fileNameLabel {
     if (!_fileNameLabel) {
-        _fileNameLabel = [[UILabel alloc] init];
+        _fileNameLabel = [[UILabel alloc] initWithFrame:[CMScanQRCodeVC labelSize]];
         _fileNameLabel.textColor = [UIColor blackColor];
     }
     return _fileNameLabel;
@@ -83,10 +87,10 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
     self.progeressLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 40);
     
     [self.view addSubview:self.transmitLabel];
-    self.transmitLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 60);
+    self.transmitLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 100);
     
     [self.view addSubview:self.fileNameLabel];
-    self.fileNameLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 90);
+    self.fileNameLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 150);
     
     SenderResolveProtocolManager *sender = [SenderResolveProtocolManager shared];
     [ sender addObserver:self forKeyPath:NSStringFromSelector(@selector(status)) options:NSKeyValueObservingOptionNew context:kCMSenderResolveStatusContext];

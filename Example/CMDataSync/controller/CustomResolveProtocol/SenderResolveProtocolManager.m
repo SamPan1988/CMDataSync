@@ -68,7 +68,7 @@
        transmitStatus:(CMSyncTransmitStatus) status {
     self.transmitStr = [CMResolveProtocolTool convertTransmitStatus:status];
     if (tag == CMNoteContentTransferCode) {
-        self.bigFileProgress = sendedLength / self.currentAttachmentSize;
+        self.bigFileProgress = (float) sendedLength / self.currentAttachmentSize;
     }
 }
 
@@ -114,10 +114,11 @@
                     NSLog(@"笔记的meta传输成功");
                     NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment];
                     NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:attachData withCode:CMNoteContentTransferCode status:0 endData:endData];
-                    [CMDataSyncQRCodeTCPquickStarter sendData:transmitData expectResponseEndData:endData expectResponseLength:0 tag:CMNoteMetaTransferCode];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:transmitData expectResponseEndData:endData expectResponseLength:0 tag:CMNoteContentTransferCode];
                     //传输笔记内容
                 } else if (code == CMNoteContentTransferCode) {
                     NSLog(@"笔记的内容传输成功");
+                    self.bigFileProgress = 1.0;
                     //传输下一个笔记本或者断开链接
                     if (self.currentModelIndex + 1 >= self.notebooklist.count) {
                         //已经全部传输完毕，关闭链接

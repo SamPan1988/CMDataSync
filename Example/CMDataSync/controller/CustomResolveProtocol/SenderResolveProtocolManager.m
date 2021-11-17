@@ -98,9 +98,10 @@
                     NSLog(@"笔记模型接收成功");
                     //传输笔记附件的id和附件数据长度
                     NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment];
+                    NSData *transmitContentData = [CMResolveProtocolTool appendHeaderOnData:attachData withCode:CMNoteContentTransferCode status:0 endData:endData];
                    NSString *fileName = [[self.currentNotebook.attachment lastPathComponent] stringByDeletingPathExtension];
                     self.currentFileName = fileName;
-                    self.currentAttachmentSize = attachData.length;
+                    self.currentAttachmentSize = transmitContentData.length;
                     NSDictionary *dict = @{
                         kCMNoteBookIdOfAttachment: self.currentNotebook.notebookID,
                         kCMNoteBookSizeOfAttachment: @(self.currentAttachmentSize),

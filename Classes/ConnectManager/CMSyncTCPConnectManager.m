@@ -26,6 +26,9 @@ static const NSTimeInterval kCMSyncDataTimeOut = 60;
 @property (nonatomic, strong) NSMutableDictionary *currentWrittingDataDict;
 @property (nonatomic, strong) NSMutableDictionary *currentReadBufferDict;
 
+@property (nonatomic, strong) NSMutableDictionary *currentSendLengthDict;
+@property (nonatomic, strong) NSMutableDictionary *currentReceiveLengthDict;
+
 @property (nonatomic, strong) dispatch_queue_t delegateQueue;
 @property (nonatomic, strong) GCDAsyncSocket *socket;
 @end
@@ -44,6 +47,20 @@ static const NSTimeInterval kCMSyncDataTimeOut = 60;
         _currentReadBufferDict = [[NSMutableDictionary alloc] initWithCapacity:0];
     }
     return _currentReadBufferDict;
+}
+
+- (NSMutableDictionary *) currentSendLengthDict {
+    if (!_currentSendLengthDict) {
+        _currentSendLengthDict = [[NSMutableDictionary alloc] init];
+    }
+    return _currentSendLengthDict;
+}
+
+- (NSMutableDictionary *) currentReceiveLengthDict {
+    if (!_currentReceiveLengthDict) {
+        _currentReceiveLengthDict = [[NSMutableDictionary alloc] init];
+    }
+    return _currentReceiveLengthDict;
 }
 
 - (dispatch_queue_t) delegateQueue {
@@ -147,12 +164,12 @@ static const NSTimeInterval kCMSyncDataTimeOut = 60;
         if (!socketBeUsed || !socketBeUsed.isConnected) { return;}
         //一读一写是相对的
         if (endData) {
-            [socketBeUsed readDataToData:endData withTimeout:kCMSyncDataTimeOut tag:tag];
+            [socketBeUsed readDataToData:endData withTimeout:-1 tag:tag];
         } else {
-            [socketBeUsed readDataToLength:length withTimeout:kCMSyncDataTimeOut tag:tag];
+            [socketBeUsed readDataToLength:length withTimeout:-1 tag:tag];
         }
         self.currentWrittingDataDict[@(tag)] = data;
-        [socketBeUsed writeData:data withTimeout:10 tag:tag];
+        [socketBeUsed writeData:data withTimeout:-1 tag:tag];
     });
 }
 
@@ -177,7 +194,15 @@ static const NSTimeInterval kCMSyncDataTimeOut = 60;
 
 
 - (void)socket:(GCDAsyncSocket *)sock didWritePartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
-    [self.resolveDelegate sendedLength:partialLength tag:tag transmitStatus:CMSyncTransmitStatusSending];
+    NSUInteger totalSendLength = 0;
+    NSNumber *currentSendLength = self.currentSendLengthDict[@(tag)];
+    if (currentSendLength) {
+        totalSendLength = [currentSendLength unsignedIntegerValue] + partialLength;
+    } else {
+        totalSendLength = partialLength;
+    }
+    self.currentSendLengthDict[@(tag)] = @(totalSendLength);
+    [self.resolveDelegate sendedLength:totalSendLength tag:tag transmitStatus:CMSyncTransmitStatusSending];
 }
 
 - (NSTimeInterval)socket:(GCDAsyncSocket *)sock
@@ -208,13 +233,21 @@ static const NSTimeInterval kCMSyncDataTimeOut = 60;
                                       address:self.senderAdress
                                 receiveLength:data.length
                                           tag:tag transmitStatus:CMSyncTransmitStatusComplete];
+    self.currentReceiveLengthDict[@(tag)] = nil;
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
-    NSMutableData *dataBuffer = self.currentReadBufferDict[@(tag)];
-    [self.resolveDelegate resolveReceivedData:dataBuffer
+    NSUInteger totalReceiveLength = 0;
+    NSNumber *currentReceiveLength = self.currentReceiveLengthDict[@(tag)];
+    if (currentReceiveLength) {
+        totalReceiveLength = [currentReceiveLength unsignedIntegerValue] + partialLength;
+    } else {
+        totalReceiveLength = partialLength;
+    }
+    self.currentReceiveLengthDict[@(tag)] = @(totalReceiveLength);
+    [self.resolveDelegate resolveReceivedData:nil
                                       address:self.senderAdress
-                                receiveLength:partialLength
+                                receiveLength:totalReceiveLength
                                           tag:tag
                                transmitStatus:CMSyncTransmitStatusSending];
 }

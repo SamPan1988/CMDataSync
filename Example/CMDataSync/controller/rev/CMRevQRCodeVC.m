@@ -27,30 +27,34 @@ static void *kCMReceiverResolveFileContext = &kCMReceiverResolveFileContext;
 
 @implementation CMRevQRCodeVC
 
++ (CGRect) labelSize {
+    return CGRectMake(0, 0, 250, 50);
+}
+
 - (UILabel *)statusLabel {
     if (!_statusLabel) {
-        _statusLabel = [[UILabel alloc] init];
+        _statusLabel = [[UILabel alloc] initWithFrame:[CMRevQRCodeVC labelSize]];
     }
     return _statusLabel;
 }
 
 - (UILabel *) transmitStatusLabel {
     if (!_transmitStatusLabel) {
-        _transmitStatusLabel = [[UILabel alloc] init];
+        _transmitStatusLabel = [[UILabel alloc] initWithFrame:[CMRevQRCodeVC labelSize]];
     }
     return _transmitStatusLabel;
 }
 
 - (UILabel *) progressLabel {
     if (!_progressLabel) {
-        _progressLabel = [[UILabel alloc] init];
+        _progressLabel = [[UILabel alloc] initWithFrame:[CMRevQRCodeVC labelSize]];
     }
     return _progressLabel;
 }
 
 - (UILabel *)fileNameLabel {
     if (!_fileNameLabel) {
-        _fileNameLabel = [[UILabel alloc] init];
+        _fileNameLabel = [[UILabel alloc] initWithFrame:[CMRevQRCodeVC labelSize]];
     }
     return _fileNameLabel;
 }

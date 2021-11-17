@@ -79,7 +79,8 @@
         case CMSyncTransmitStatusSending:
             //当前正在接收大文件，则显示进度；
             if (self.currentCode == CMNoteMetaTransferCode) {
-                self.bigFileProgress = receivedLength / self.currentAttachmentSize;
+                self.bigFileProgress = ((float) receivedLength) / self.currentAttachmentSize;
+                NSLog(@"接收进度：%lf",self.bigFileProgress);
             }
             break;
         //TODO: 如果实际不会停，得重新想个逻辑
@@ -125,12 +126,13 @@
                    
                 } else if (code == CMNoteContentTransferCode) {
                     NSLog(@"笔记的内容接收");
-                    if (receivedData.length != self.currentAttachmentSize) {
+                    if (!receivedData) {
                         //返回接收失败
                         NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1 endData:endData];
                         [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData expectResponseEndData:endData expectResponseLength:0 tag:-1];
                         return;
                     }
+                    self.bigFileProgress = 1.0;
                     NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
                     NSURL *pathURL = [NSURL URLWithString:paths];
                     pathURL = [pathURL URLByAppendingPathComponent:self.currentFileName];

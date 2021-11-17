@@ -106,9 +106,6 @@
     self.port = port;
     self.resolveDelegate = resolveProtocol;
     selfAdress = [CMDataSyncTool getCurrentMachineIpAddress];
-    NSMutableData *readBuffer = [[NSMutableData alloc] init];
-    self.currentReadBufferDict[@(kCMListenInitialTag)] = readBuffer;
-    [self.socket readDataWithTimeout:-1 buffer:readBuffer bufferOffset:0 tag:kCMListenInitialTag];
     return selfAdress;
 }
 
@@ -136,13 +133,14 @@
 
 - (void) sendData:(NSData *) data tag:(NSUInteger) tag {
     dispatch_async(self.delegateQueue, ^{
-        if (!self.socket || !self.socket.isConnected) { return;}
+        GCDAsyncSocket *socketBeUsed =  self.listeningSocket ? self.listeningSocket : self.socket;
+        if (!socketBeUsed || !socketBeUsed.isConnected) { return;}
         //一读一写是相对的
         NSMutableData *readBuffer = [[NSMutableData alloc] init];
         self.currentReadBufferDict[@(tag)] = readBuffer;
-        [self.socket readDataWithTimeout:-1 buffer:readBuffer bufferOffset:0 tag:tag];
+        [socketBeUsed readDataWithTimeout:-1 buffer:readBuffer bufferOffset:0 tag:tag];
         self.currentWrittingDataDict[@(tag)] = data;
-        [self.socket writeData:data withTimeout:10 tag:tag];
+        [socketBeUsed writeData:data withTimeout:10 tag:tag];
     });
 }
 
@@ -186,6 +184,9 @@
     self.senderAdress = self.listeningSocket.connectedHost;
     self.connectStatus = CMSyncConnectStatusConnected;
     [self.resolveDelegate didReceiveConnectStatus:self.connectStatus error:nil];
+    NSMutableData *readBuffer = [[NSMutableData alloc] init];
+    self.currentReadBufferDict[@(kCMListenInitialTag)] = readBuffer;
+    [self.listeningSocket readDataWithTimeout:-1 buffer:readBuffer bufferOffset:0 tag:kCMListenInitialTag];
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {

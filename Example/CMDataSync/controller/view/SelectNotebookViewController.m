@@ -183,7 +183,7 @@
 
 - (void) createExampleData {
     NSMutableArray *noteList = [[NSMutableArray alloc] init];
-    NSArray *nameList = @[@"03 Homemade Dynamite.m4a",@"04 The Louvre",@"05 Liability.m4a",@"07 Sober II (Melodrama).m4a",@"10 Liability (Reprise).m4a"];
+    NSArray *nameList = @[@"03 Homemade Dynamite",@"04 The Louvre",@"05 Liability",@"07 Sober II (Melodrama)",@"10 Liability (Reprise)"];
     for (NSUInteger i = 0; i < nameList.count; i++) {
         NotebookModel *note = [self getNoteModelByName:nameList[i]];
         [noteList addObject:note];
@@ -195,15 +195,8 @@
     NotebookModel *noteModel = [[NotebookModel alloc] init];
     noteModel.name = name;
     noteModel.notebookID = [[NSUUID UUID] UUIDString];
-    NSURL *attachURL = [[NSBundle mainBundle] URLForResource:name withExtension:nil subdirectory:@"exampleData"];
-    NSData *attachData = [NSData dataWithContentsOfFile:attachURL.absoluteString];
-    NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-    NSURL *pathURL = [NSURL URLWithString:paths];
-    [pathURL URLByAppendingPathComponent:name];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:pathURL.absoluteString]) {
-        [[NSFileManager defaultManager] createFileAtPath:pathURL.absoluteString contents:attachData attributes:nil];
-    }
-    noteModel.attachment = pathURL.absoluteString;
+    NSURL *attachURL = [[NSBundle mainBundle] URLForResource:name withExtension:@"m4a"];
+    noteModel.attachment = attachURL.path;
     return noteModel;
 }
 

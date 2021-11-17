@@ -96,6 +96,11 @@
                 if (code == CMNoteModelTransferCode) {
                     NSLog(@"笔记模型接收");
                     self.currentNotebook = [NotebookModel yy_modelWithJSON:receivedData];
+                    if (!self.currentNotebook) {
+                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
+                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                        return;
+                    }
                     
                 } else if (code == CMNoteMetaTransferCode) {
                     NSLog(@"笔记的meta接收");
@@ -116,15 +121,15 @@
                    
                 } else if (code == CMNoteContentTransferCode) {
                     NSLog(@"笔记的内容接收");
-                    if (receivedData.length != self.currentAttachmentSize) {
-                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
-                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
-                        return;
-                    }
+//                    if (receivedData.length != self.currentAttachmentSize) {
+//                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
+//                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+//                        return;
+//                    }
                     NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
                     NSURL *pathURL = [NSURL URLWithString:paths];
                     [pathURL URLByAppendingPathComponent:self.currentFileName];
-                    self.currentNotebook.attachment = pathURL;
+                    self.currentNotebook.attachment = pathURL.path;
                     [[NSFileManager defaultManager] createFileAtPath:pathURL.absoluteString contents:receivedData attributes:nil];
                     //TODO: 保存到数据库里
                     NSLog(@"保存到数据库");

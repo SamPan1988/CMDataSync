@@ -33,6 +33,7 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 - (UILabel *)statusLabel {
     if (!_statusLabel) {
         _statusLabel = [[UILabel alloc] init];
+        _statusLabel.textColor = [UIColor blackColor];
     }
     return _statusLabel;
 }
@@ -40,6 +41,7 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 - (UILabel *) transmitLabel {
     if (!_transmitLabel) {
         _transmitLabel = [[UILabel alloc] init];
+        _transmitLabel.textColor = [UIColor blackColor];
     }
     return _transmitLabel;
 }
@@ -47,6 +49,7 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 - (UILabel *) progeressLabel {
     if (!_progeressLabel) {
         _progeressLabel = [[UILabel alloc] init];
+        _progeressLabel.textColor = [UIColor blackColor];
     }
     return _progeressLabel;
 }
@@ -54,6 +57,7 @@ static void *kCMSenderResolveFileNameContext = &kCMSenderResolveFileNameContext;
 - (UILabel *)fileNameLabel {
     if (!_fileNameLabel) {
         _fileNameLabel = [[UILabel alloc] init];
+        _fileNameLabel.textColor = [UIColor blackColor];
     }
     return _fileNameLabel;
 }

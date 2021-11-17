@@ -11,7 +11,10 @@ const static NSUInteger kCMReserveHeaderLength = 8;
 
 @implementation CMResolveProtocolTool
 
-+ (NSData *) appendHeaderOnData:(NSData * _Nullable) data withCode:(UInt8) code status:(UInt8) status {
++ (NSData *) appendHeaderOnData:( NSData * _Nullable ) data
+                       withCode:(UInt8) code
+                         status:(UInt8) status
+                         endData:(NSData *) endData {
     NSMutableData *resultData = [[NSMutableData alloc] init];
     Byte header[kCMReserveHeaderLength];
     for (NSUInteger i = 0; i < kCMReserveHeaderLength; i++) {
@@ -25,16 +28,26 @@ const static NSUInteger kCMReserveHeaderLength = 8;
     }
     [resultData appendBytes:&header length:kCMReserveHeaderLength];
     if (data && [data length] > 0) {
-        NSUInteger len = [data length];
+        NSData *base64Data = [data base64EncodedDataWithOptions:0];
+        NSUInteger len = [base64Data length];
         Byte *byteData = (Byte *) malloc(len);
-        [data getBytes:byteData length:len];
+        [base64Data getBytes:byteData length:len];
+        [resultData appendBytes:byteData length:len];
+        free(byteData);
+    }
+    if (endData) {
+        NSUInteger len = [endData length];
+        Byte *byteData = (Byte *) malloc(len);
+        [endData getBytes:byteData length:len];
         [resultData appendBytes:byteData length:len];
         free(byteData);
     }
     return resultData;
 }
 
-+ (void) resolveIncomeData:(NSData *) data complete:(CMResolveCompletor) completor {
++ (void) resolveIncomeData:(NSData *) data
+                   endData:(NSData *) endDdata
+                  complete:(CMResolveCompletor) completor {
     UInt8 code = 0;
     UInt8 status = 0;
     if (!data) {
@@ -53,6 +66,7 @@ const static NSUInteger kCMReserveHeaderLength = 8;
     status = *statusBuffer;
     free(statusBuffer);
     
+    //自然会截除尾部
     NSInteger resultDataLen = len - kCMReserveHeaderLength;
     if (resultDataLen <= 0) {
         completor(code,status,nil);
@@ -60,8 +74,9 @@ const static NSUInteger kCMReserveHeaderLength = 8;
     }
     void *resultDataBuffer = malloc(resultDataLen);
     [data getBytes:resultDataBuffer range:NSMakeRange(kCMReserveHeaderLength, resultDataLen)];
-    NSData *resultData = [[NSData alloc] initWithBytes:resultDataBuffer length:resultDataLen];
+    NSData *base64Data = [[NSData alloc] initWithBytes:resultDataBuffer length:resultDataLen];
     free(resultDataBuffer);
+    NSData *resultData = [[NSData alloc] initWithBase64EncodedData:base64Data options:NSDataBase64DecodingIgnoreUnknownCharacters];
     completor(code, status, resultData);
 }
 

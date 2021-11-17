@@ -8,6 +8,7 @@
 
 #import "CMRevQRCodeVC.h"
 #import "ReceiverResolveProtocolManager.h"
+#import "CMResolveProtocolTool.h"
 #import <CMDataSync/CMDataSync.h>
 
 static void *kCMReceiverResolveStatusContext = &kCMReceiverResolveStatusContext;
@@ -63,7 +64,9 @@ static void *kCMReceiverResolveFileContext = &kCMReceiverResolveFileContext;
     ReceiverResolveProtocolManager *receiver = [ReceiverResolveProtocolManager shared];
     self.title = @"接收数据";
     self.view.backgroundColor = [UIColor whiteColor];
-    UIImage *image = [CMDataSyncQRCodeTCPquickStarter waitForConnectionWithSize:150 receiverResolveProtocol: receiver];
+    UIImage *image = [CMDataSyncQRCodeTCPquickStarter waitForConnectionWithSize:150
+                                                        expectedResponseEndData:[CMResolveProtocolTool CRLFData] expectedResponseLength:0
+                                                        receiverResolveProtocol: receiver];
     _qrCodeImageView = [[UIImageView alloc] initWithImage:image];
     [self.view addSubview:_qrCodeImageView];
     _qrCodeImageView.center = CGPointMake(self.view.center.x, self.view.center.y - 30);

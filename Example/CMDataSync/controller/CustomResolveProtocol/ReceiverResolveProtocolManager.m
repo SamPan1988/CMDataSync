@@ -83,22 +83,24 @@
             }
             break;
         //TODO: 如果实际不会停，得重新想个逻辑
-        case CMSyncTransmitStatusComplete:
-            [CMResolveProtocolTool resolveIncomeData:buffer complete:^(UInt8 code, UInt8 status, NSData * _Nonnull receivedData) {
+        case CMSyncTransmitStatusComplete: {
+            NSData *endData = [CMResolveProtocolTool CRLFData];
+            [CMResolveProtocolTool resolveIncomeData:buffer endData:endData complete:^(UInt8 code, UInt8 status, NSData * _Nonnull receivedData) {
                 self.currentCode = code;
                 //没有收到数据的话
                 if (!receivedData) {
                     //返回接收失败
-                    NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
-                    [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                    NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1 endData:endData];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData expectResponseEndData:endData expectResponseLength:0 tag:-1];
                     return;
                 }
                 if (code == CMNoteModelTransferCode) {
                     NSLog(@"笔记模型接收");
                     self.currentNotebook = [NotebookModel yy_modelWithJSON:receivedData];
                     if (!self.currentNotebook) {
-                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
-                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                        //返回接收失败
+                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1 endData:endData];
+                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData expectResponseEndData:endData expectResponseLength:0 tag:-1];
                         return;
                     }
                     
@@ -106,14 +108,16 @@
                     NSLog(@"笔记的meta接收");
                     NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:receivedData options:NSJSONReadingAllowFragments error:nil];
                     if (![dict isKindOfClass:[NSDictionary class]]) {
-                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
-                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                        //返回接收失败
+                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1 endData:endData];
+                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData expectResponseEndData:endData expectResponseLength:0 tag:-1];
                         return;
                     }
                     NSString *notebookid = dict[kCMNoteBookIdOfAttachment];
                     if (![self.currentNotebook.notebookID isEqualToString:notebookid]) {
-                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
-                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
+                        //返回接收失败
+                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1 endData:endData];
+                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData expectResponseEndData:endData expectResponseLength:0 tag:-1];
                         return;
                     }
                     self.currentAttachmentSize = [dict[kCMNoteBookSizeOfAttachment] integerValue];
@@ -121,16 +125,19 @@
                    
                 } else if (code == CMNoteContentTransferCode) {
                     NSLog(@"笔记的内容接收");
-//                    if (receivedData.length != self.currentAttachmentSize) {
-//                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1];
-//                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData withTag:-1];
-//                        return;
-//                    }
+                    if (receivedData.length != self.currentAttachmentSize) {
+                        //返回接收失败
+                        NSData *responseFailData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:-1 endData:endData];
+                        [CMDataSyncQRCodeTCPquickStarter sendData:responseFailData expectResponseEndData:endData expectResponseLength:0 tag:-1];
+                        return;
+                    }
                     NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
                     NSURL *pathURL = [NSURL URLWithString:paths];
-                    [pathURL URLByAppendingPathComponent:self.currentFileName];
+                    pathURL = [pathURL URLByAppendingPathComponent:self.currentFileName];
+                    pathURL = [pathURL URLByAppendingPathExtension:@"m4a"];
                     self.currentNotebook.attachment = pathURL.path;
-                    [[NSFileManager defaultManager] createFileAtPath:pathURL.absoluteString contents:receivedData attributes:nil];
+                    [[NSFileManager defaultManager] createFileAtPath:pathURL.path contents:receivedData attributes:nil];
+                    NSLog(@"保存文件的路径是：%@",pathURL.path);
                     //TODO: 保存到数据库里
                     NSLog(@"保存到数据库");
                     //清空中间值
@@ -138,10 +145,11 @@
                     self.currentAttachmentSize = 0;
                 }
                 //回复接收成功
-                NSData *responseSucceedData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:1];
-                [CMDataSyncQRCodeTCPquickStarter sendData:responseSucceedData withTag:1];
+                NSData *responseSucceedData = [CMResolveProtocolTool appendHeaderOnData:nil withCode:code status:1 endData:endData];
+                [CMDataSyncQRCodeTCPquickStarter sendData:responseSucceedData expectResponseEndData:endData expectResponseLength:0 tag:1];
             }];
             break;
+        }
     }
 }
 @end

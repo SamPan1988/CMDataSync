@@ -9,6 +9,8 @@
 #import <CocoaAsyncSocket/GCDAsyncSocket.h>
 #import "CMDataSyncTool.h"
 
+static const NSTimeInterval kCMSyncDataTimeOut = 60;
+
 @interface CMSyncTCPConnectManager()<GCDAsyncSocketDelegate>
 /// 当前网络连接状态
 @property (nonatomic, assign) CMSyncConnectStatus connectStatus;
@@ -17,6 +19,9 @@
 @property (nonatomic, assign) uint16_t port;
 @property (nonatomic, strong) GCDAsyncSocket *listeningSocket;
 @property (nonatomic, strong) NSString *senderAdress;
+
+@property (nonatomic, strong) NSData *firstResponseEndData;
+@property (nonatomic, assign) NSUInteger firstResponseLength;
 
 @property (nonatomic, strong) NSMutableDictionary *currentWrittingDataDict;
 @property (nonatomic, strong) NSMutableDictionary *currentReadBufferDict;
@@ -83,7 +88,9 @@
 }
 
 - (NSString *) startWaitingForConnectOnPort:(uint16_t) port
-                            resolveProtocol:(id <CMSyncResolveProtocol>) resolveProtocol {
+                      expectResponseEndData:(NSData *) endData
+                       expectResponseLength:(NSUInteger) length
+                            resolveProtocol:(id <CMSyncResolveProtocol>) resolveProtocol{
     NSString *selfAdress;
     __block NSError *innerError;
     dispatch_sync(self.delegateQueue, ^{
@@ -103,6 +110,8 @@
         [resolveProtocol didReceiveConnectStatus:CMSyncConnectStatusConnectError error:innerError];
         return selfAdress;
     }
+    self.firstResponseLength = length;
+    self.firstResponseEndData = endData;
     self.port = port;
     self.resolveDelegate = resolveProtocol;
     selfAdress = [CMDataSyncTool getCurrentMachineIpAddress];
@@ -131,14 +140,17 @@
     });
 }
 
-- (void) sendData:(NSData *) data tag:(NSUInteger) tag {
+- (void) sendData:(NSData *) data expectResponseEndData:(NSData *) endData expectResponseLength:(NSUInteger) length
+              tag:(NSUInteger) tag {
     dispatch_async(self.delegateQueue, ^{
         GCDAsyncSocket *socketBeUsed =  self.listeningSocket ? self.listeningSocket : self.socket;
         if (!socketBeUsed || !socketBeUsed.isConnected) { return;}
         //一读一写是相对的
-        NSMutableData *readBuffer = [[NSMutableData alloc] init];
-        self.currentReadBufferDict[@(tag)] = readBuffer;
-        [socketBeUsed readDataWithTimeout:-1 buffer:readBuffer bufferOffset:0 tag:tag];
+        if (endData) {
+            [socketBeUsed readDataToData:endData withTimeout:kCMSyncDataTimeOut tag:tag];
+        } else {
+            [socketBeUsed readDataToLength:length withTimeout:kCMSyncDataTimeOut tag:tag];
+        }
         self.currentWrittingDataDict[@(tag)] = data;
         [socketBeUsed writeData:data withTimeout:10 tag:tag];
     });
@@ -184,18 +196,18 @@
     self.senderAdress = self.listeningSocket.connectedHost;
     self.connectStatus = CMSyncConnectStatusConnected;
     [self.resolveDelegate didReceiveConnectStatus:self.connectStatus error:nil];
-    NSMutableData *readBuffer = [[NSMutableData alloc] init];
-    self.currentReadBufferDict[@(kCMListenInitialTag)] = readBuffer;
-    [self.listeningSocket readDataWithTimeout:-1 buffer:readBuffer bufferOffset:0 tag:kCMListenInitialTag];
+    if (self.firstResponseEndData) {
+        [self.listeningSocket readDataToData:self.firstResponseEndData withTimeout:-1 tag:kCMListenInitialTag];
+    } else {
+        [self.listeningSocket readDataToLength:self.firstResponseLength withTimeout:-1 tag:kCMListenInitialTag];
+    }
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
-    NSMutableData *dataBuffer = self.currentReadBufferDict[@(tag)];
-    [self.resolveDelegate resolveReceivedData:dataBuffer
+    [self.resolveDelegate resolveReceivedData:[[NSMutableData alloc] initWithData:data]
                                       address:self.senderAdress
-                                receiveLength:dataBuffer.length
+                                receiveLength:data.length
                                           tag:tag transmitStatus:CMSyncTransmitStatusComplete];
-    self.currentReadBufferDict[@(tag)] = nil;
 }
 
 - (void)socket:(GCDAsyncSocket *)sock didReadPartialDataOfLength:(NSUInteger)partialLength tag:(long)tag {
@@ -208,13 +220,11 @@
 }
 
 - (NSTimeInterval)socket:(GCDAsyncSocket *)sock shouldTimeoutReadWithTag:(long)tag elapsed:(NSTimeInterval)elapsed bytesDone:(NSUInteger)length {
-    NSMutableData *dataBuffer = self.currentReadBufferDict[@(tag)];
-    [self.resolveDelegate resolveReceivedData:dataBuffer
+    [self.resolveDelegate resolveReceivedData:nil
                                       address:self.senderAdress
                                 receiveLength:length
                                           tag:tag
                                transmitStatus:CMSyncTransmitStatusTimeout];
-    self.currentReadBufferDict[@(tag)] = nil;
     return 0;
 }
 

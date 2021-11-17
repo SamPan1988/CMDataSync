@@ -25,19 +25,23 @@ typedef void(^CMResolveCompletor)(UInt8 code, UInt8 status, NSData  * _Nullable 
 @interface CMResolveProtocolTool : NSObject
 
 
-/// 给数据添加上头部信息
+/// 给数据添加上头部信息和终止符，数据本体也会转为Base64编码
 /// @param data 被添加头部信息的数据，可为空
 /// @param code 步骤码
 /// @param status 状态码
+/// @param endData 终止符
 + (NSData *) appendHeaderOnData:( NSData * _Nullable ) data
                        withCode:(UInt8) code
-                         status:(UInt8) status;
+                         status:(UInt8) status
+                         endData:(NSData *) endData;
 
 
-/// 接收数据，分离头部信息和实际数据
+/// 接收数据，根据终止符，分离头部信息和实际数据
 /// @param data 接收到的数据
+/// @param endData 终止符
 /// @param completor 分离后的结果
 + (void) resolveIncomeData:(NSData *) data
+                   endData:(NSData *) endDdata
                   complete:(CMResolveCompletor) completor;
 
 
@@ -46,6 +50,14 @@ typedef void(^CMResolveCompletor)(UInt8 code, UInt8 status, NSData  * _Nullable 
 + (NSString *) convertStauts:(CMSyncConnectStatus) status;
 
 + (NSString *) convertTransmitStatus:(CMSyncTransmitStatus) transmitStatus;
+
++ (NSData *)CRLFData;
+
++ (NSData *)CRData;
+
++ (NSData *)LFData;
+
++ (NSData *)ZeroData;
 
 
 @end

@@ -53,7 +53,7 @@ typedef enum : NSUInteger {
 
 
 /// 接收数据解释方法
-/// @param buffer 已接收的数据
+/// @param buffer 已接收的数据，传输未完成时，该值为空；若采用终止符来停止读取，则最后收到的数据不会含有终止符
 /// @param address 发送方的地址
 /// @param receivedLength 已接收的数据长度
 /// @param tag buffer的标识
@@ -81,8 +81,12 @@ typedef enum : NSUInteger {
 
 /// 作为接收方等待连接建立，建立监听成功后，返回本机地址作公告之用
 /// @param port 监听port
+/// @param endData 预期首次返回数据的终止符
+/// @param length 预期首次返回数据的长度，若已设定终止符，则忽略长度
 /// @param resolveProtocol  解释数据代理实例, manager对代理实例有强引用，直到链接结束
 - (NSString *) startWaitingForConnectOnPort:(uint16_t) port
+                      expectResponseEndData:(NSData *) endData
+                       expectResponseLength:(NSUInteger) length
                             resolveProtocol:(id <CMSyncResolveProtocol>) resolveProtocol;
 
 @required
@@ -92,8 +96,11 @@ typedef enum : NSUInteger {
 
 /// 发送数据，发送后即会开始监听接收方的反馈，若链接还没有建立，该方法调用无效
 /// @param data 被发送的数据
+/// @param endData 预期返回数据的终止符
+/// @param length 预期返回数据的长度，如果终止符已设置，则忽略长度
 /// @param tag 被发送数据的tag
-- (void) sendData:(NSData *) data tag:(NSUInteger) tag;
+- (void) sendData:(NSData *) data expectResponseEndData:(NSData *) endData expectResponseLength:(NSUInteger) length
+              tag:(NSUInteger) tag;
 
 @end
 

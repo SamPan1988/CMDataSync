@@ -87,8 +87,9 @@
             break;
         case CMSyncTransmitStatusSending:
             break;
-        case CMSyncTransmitStatusComplete:
-            [CMResolveProtocolTool resolveIncomeData:buffer complete:^(UInt8 code, UInt8 status, NSData * _Nonnull receivedData) {
+        case CMSyncTransmitStatusComplete: {
+            NSData *endData = [CMResolveProtocolTool CRLFData];
+            [CMResolveProtocolTool resolveIncomeData:buffer endData: endData complete:^(UInt8 code, UInt8 status, NSData * _Nonnull receivedData) {
                 if (status != 1) {
                     NSLog(@"接收失败");
                     return;
@@ -106,13 +107,13 @@
                         kCMNoteBookNameOfAttachment: fileName
                     };
                     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
-                    NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:jsonData withCode:CMNoteMetaTransferCode status:0];
-                    [CMDataSyncQRCodeTCPquickStarter sendData:transmitData withTag:CMNoteMetaTransferCode];
+                    NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:jsonData withCode:CMNoteMetaTransferCode status:0 endData:endData];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:transmitData expectResponseEndData:endData expectResponseLength:0 tag:CMNoteMetaTransferCode];
                 } else if (code == CMNoteMetaTransferCode) {
                     NSLog(@"笔记的meta传输成功");
                     NSData *attachData = [NSData dataWithContentsOfFile:self.currentNotebook.attachment];
-                    NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:attachData withCode:CMNoteContentTransferCode status:0];
-                    [CMDataSyncQRCodeTCPquickStarter sendData:transmitData withTag:CMNoteContentTransferCode];
+                    NSData *transmitData = [CMResolveProtocolTool appendHeaderOnData:attachData withCode:CMNoteContentTransferCode status:0 endData:endData];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:transmitData expectResponseEndData:endData expectResponseLength:0 tag:CMNoteMetaTransferCode];
                     //传输笔记内容
                 } else if (code == CMNoteContentTransferCode) {
                     NSLog(@"笔记的内容传输成功");
@@ -126,12 +127,13 @@
                     self.currentModelIndex += 1;
                     self.currentNotebook = self.notebooklist[self.currentModelIndex];
                     NSData *modelData = [self.currentNotebook yy_modelToJSONData];
-                    NSData *dataWithHeader = [CMResolveProtocolTool appendHeaderOnData:modelData withCode:CMNoteModelTransferCode status:0];
-                    [CMDataSyncQRCodeTCPquickStarter sendData:dataWithHeader withTag:CMNoteModelTransferCode];
+                    NSData *dataWithHeader = [CMResolveProtocolTool appendHeaderOnData:modelData withCode:CMNoteModelTransferCode status:0 endData:endData];
+                    [CMDataSyncQRCodeTCPquickStarter sendData:dataWithHeader expectResponseEndData:endData expectResponseLength:0 tag:CMNoteMetaTransferCode];
                 }
                 
             }];
             break;
+        }
     }
 }
 
@@ -141,12 +143,13 @@
         return;
     }
     //发送第一个
+    NSData *endData = [CMResolveProtocolTool CRLFData];
     self.notebooklist = noteBooklist;
     self.currentModelIndex = 0;
     self.currentNotebook = noteBooklist.firstObject;
     NSData *modelData = [self.currentNotebook yy_modelToJSONData];
-    NSData *dataWithHeader = [CMResolveProtocolTool appendHeaderOnData:modelData withCode:CMNoteModelTransferCode status:0];
-    [CMDataSyncQRCodeTCPquickStarter sendData:dataWithHeader withTag:CMNoteModelTransferCode];
+    NSData *dataWithHeader = [CMResolveProtocolTool appendHeaderOnData:modelData withCode:CMNoteModelTransferCode status:0 endData:endData];
+    [CMDataSyncQRCodeTCPquickStarter sendData:dataWithHeader expectResponseEndData:endData expectResponseLength:0 tag:CMNoteMetaTransferCode];
 }
 
 

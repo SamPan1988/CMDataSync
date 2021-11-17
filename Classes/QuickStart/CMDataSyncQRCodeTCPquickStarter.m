@@ -44,9 +44,10 @@ static NSUInteger CMLatestSendingDataSize = 0;
 }
 
 + (UIImage *) waitForConnectionWithSize:(CGFloat ) size
+                expectedResponseEndData:(NSData *) endData expectedResponseLength:(NSUInteger) length
                 receiverResolveProtocol:(id <CMSyncResolveProtocol>) receiveResolveProtocol {
    
-    NSString *address = [[CMSyncTCPConnectManager shared] startWaitingForConnectOnPort:kCMDataSyncDefaultPort resolveProtocol:receiveResolveProtocol];
+    NSString *address = [[CMSyncTCPConnectManager shared] startWaitingForConnectOnPort:kCMDataSyncDefaultPort expectResponseEndData:endData expectResponseLength:length resolveProtocol:receiveResolveProtocol];
     if (!address) {
         return nil;
     }
@@ -68,9 +69,10 @@ static NSUInteger CMLatestSendingDataSize = 0;
     }
 }
 
-+ (void) sendData:(NSData *) data withTag: (NSUInteger) tag {
++ (void) sendData:(NSData *) data expectResponseEndData:(NSData *) endData expectResponseLength:(NSUInteger) length
+              tag:(NSUInteger) tag {
     CMLatestSendingDataSize = data.length;
-    [[CMSyncTCPConnectManager shared] sendData:data tag:tag];
+    [[CMSyncTCPConnectManager shared] sendData:data expectResponseEndData:endData expectResponseLength:length tag:tag];
 }
 
 @end

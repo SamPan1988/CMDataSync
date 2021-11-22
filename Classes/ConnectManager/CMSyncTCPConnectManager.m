@@ -9,8 +9,6 @@
 #import <CocoaAsyncSocket/GCDAsyncSocket.h>
 #import "CMDataSyncTool.h"
 
-static const NSTimeInterval kCMSyncDataTimeOut = 60;
-
 @interface CMSyncTCPConnectManager()<GCDAsyncSocketDelegate>
 /// 当前网络连接状态
 @property (nonatomic, assign) CMSyncConnectStatus connectStatus;

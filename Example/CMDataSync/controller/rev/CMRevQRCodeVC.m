@@ -7,15 +7,57 @@
 //
 
 #import "CMRevQRCodeVC.h"
-#import <ifaddrs.h>
-#import <arpa/inet.h>
+#import "ReceiverResolveProtocolManager.h"
+#import "CMResolveProtocolTool.h"
+#import <CMDataSync/CMDataSync.h>
+
+static void *kCMReceiverResolveStatusContext = &kCMReceiverResolveStatusContext;
+static void *kCMReceiverResolveStatusStringContext = &kCMReceiverResolveStatusStringContext;
+static void *kCMReceiverResolveProgressContext = &kCMReceiverResolveProgressContext;
+static void *kCMReceiverResolveTransmitContext = &kCMReceiverResolveTransmitContext;
+static void *kCMReceiverResolveFileContext = &kCMReceiverResolveFileContext;
 
 @interface CMRevQRCodeVC ()
 @property (nonatomic, strong) UIImageView *qrCodeImageView;
 @property (nonatomic, strong) UILabel *statusLabel;
+@property (nonatomic, strong) UILabel *transmitStatusLabel;
+@property (nonatomic, strong) UILabel *progressLabel;
+@property (nonatomic, strong) UILabel *fileNameLabel;
 @end
 
 @implementation CMRevQRCodeVC
+
++ (CGRect) labelSize {
+    return CGRectMake(0, 0, 250, 50);
+}
+
+- (UILabel *)statusLabel {
+    if (!_statusLabel) {
+        _statusLabel = [[UILabel alloc] initWithFrame:[CMRevQRCodeVC labelSize]];
+    }
+    return _statusLabel;
+}
+
+- (UILabel *) transmitStatusLabel {
+    if (!_transmitStatusLabel) {
+        _transmitStatusLabel = [[UILabel alloc] initWithFrame:[CMRevQRCodeVC labelSize]];
+    }
+    return _transmitStatusLabel;
+}
+
+- (UILabel *) progressLabel {
+    if (!_progressLabel) {
+        _progressLabel = [[UILabel alloc] initWithFrame:[CMRevQRCodeVC labelSize]];
+    }
+    return _progressLabel;
+}
+
+- (UILabel *)fileNameLabel {
+    if (!_fileNameLabel) {
+        _fileNameLabel = [[UILabel alloc] initWithFrame:[CMRevQRCodeVC labelSize]];
+    }
+    return _fileNameLabel;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -23,17 +65,15 @@
 }
 
 - (void)initUI {
+    ReceiverResolveProtocolManager *receiver = [ReceiverResolveProtocolManager shared];
     self.title = @"接收数据";
     self.view.backgroundColor = [UIColor whiteColor];
-    
-    NSString *ipAddress = [self getOurIpAddress];
-    NSString *ip = [@"QPen_" stringByAppendingString:ipAddress];
-    UIImage *image = [self generateQRCodeWithString:ip Size:150];
-    
+    UIImage *image = [CMDataSyncQRCodeTCPquickStarter waitForConnectionWithSize:150
+                                                        expectedResponseEndData:[CMResolveProtocolTool CRLFData] expectedResponseLength:0
+                                                        receiverResolveProtocol: receiver];
     _qrCodeImageView = [[UIImageView alloc] initWithImage:image];
     [self.view addSubview:_qrCodeImageView];
     _qrCodeImageView.center = CGPointMake(self.view.center.x, self.view.center.y - 30);
-    
     _statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 260, 50)];
     _statusLabel.center = CGPointMake(self.view.center.x, self.view.center.y + 80);
     _statusLabel.numberOfLines = 0;
@@ -41,69 +81,65 @@
     _statusLabel.font = [UIFont systemFontOfSize:13];
     _statusLabel.textAlignment = NSTextAlignmentCenter;
     [self.view addSubview:_statusLabel];
+    
+    [self.view addSubview:self.progressLabel];
+    self.progressLabel.hidden = YES;
+    self.progressLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 40);
+    [self.view addSubview:self.transmitStatusLabel];
+    self.transmitStatusLabel.hidden = YES;
+    self.transmitStatusLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT / 2 + 100);
+    [self.view addSubview:self.fileNameLabel];
+    self.fileNameLabel.hidden = YES;
+    self.fileNameLabel.center = CGPointMake(GH_WIDTH / 2, GH_HEIGHT/2 + 150);
+    
+    [ receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(status)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveStatusContext];
+    [ receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(statusStr)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveStatusStringContext];
+    [receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveProgressContext];
+    [receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveTransmitContext];
+    [receiver addObserver:self forKeyPath:NSStringFromSelector(@selector(currentFileName)) options:NSKeyValueObservingOptionNew context:kCMReceiverResolveFileContext];
 }
 
-//MARK: - Get IP Address
-- (NSString *)getOurIpAddress {
-    NSString *address = @"error";
-    struct ifaddrs *interfaces = NULL;
-    struct ifaddrs *temp_addr = NULL;
-    int success = 0;
-    success = getifaddrs(&interfaces);
-    if (success == 0) {
-        temp_addr = interfaces;
-        while(temp_addr != NULL) {
-            if(temp_addr->ifa_addr->sa_family == AF_INET) {
-                if([[NSString stringWithUTF8String:temp_addr->ifa_name] isEqualToString:@"en0"]) {
-                    address = [NSString stringWithUTF8String:inet_ntoa(((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr)];
-                }
+- (void) observeValueForKeyPath:(NSString *)keyPath
+                       ofObject:(id)object
+                         change:(NSDictionary<NSKeyValueChangeKey,id> *)change
+                        context:(void *)context {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (context == kCMReceiverResolveStatusContext) {
+            CMSyncConnectStatus status = [change[NSKeyValueChangeNewKey] integerValue];
+            if (status == CMSyncConnectStatusConnected) {
+                //链接成功，隐藏二维码
+                self.qrCodeImageView.hidden = YES;
+                self.statusLabel.center = CGPointMake(self.view.center.x, self.view.center.y - 80);
+                self.progressLabel.hidden = NO;
+                self.transmitStatusLabel.hidden = NO;
+                self.fileNameLabel.hidden = NO;
             }
-            temp_addr = temp_addr->ifa_next;
         }
-    }
-    // Free memory
-    freeifaddrs(interfaces);
-    return address;
+        else if (context == kCMReceiverResolveStatusStringContext) {
+            NSString *statusStr = change[NSKeyValueChangeNewKey];
+            self.statusLabel.text = statusStr;
+        } else if (context == kCMReceiverResolveProgressContext) {
+            float progress = [change[NSKeyValueChangeNewKey] floatValue];
+            NSString *progressStr = [NSString stringWithFormat:@"传输进度:%.2f",progress];
+            self.progressLabel.text = progressStr;
+        } else if (context == kCMReceiverResolveTransmitContext) {
+            NSString *transmitStatusStr = change[NSKeyValueChangeNewKey];
+            self.transmitStatusLabel.text = transmitStatusStr;
+        } else if (context == kCMReceiverResolveFileContext) {
+            NSString *fileName = change[NSKeyValueChangeNewKey];
+            self.fileNameLabel.text = fileName;
+        }
+    });
 }
 
-//生成二维码
-- (UIImage *)generateQRCodeWithString:(NSString *)string Size:(CGFloat)size
-{
-    //创建过滤器
-    CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
-    //过滤器恢复默认
-    [filter setDefaults];
-    //给过滤器添加数据<字符串长度893>
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES];
-    [filter setValue:data forKey:@"inputMessage"];
-    //获取二维码过滤器生成二维码
-    CIImage *image = [filter outputImage];
-    UIImage *img = [self createNonInterpolatedUIImageFromCIImage:image WithSize:size];
-    return img;
+- (void)dealloc {
+    ReceiverResolveProtocolManager *receiver = [ReceiverResolveProtocolManager shared];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(statusStr)) context:kCMReceiverResolveStatusStringContext];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(bigFileProgress)) context:kCMReceiverResolveProgressContext];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(status)) context:kCMReceiverResolveStatusContext];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(transmitStr)) context:kCMReceiverResolveTransmitContext];
+    [receiver removeObserver:self forKeyPath:NSStringFromSelector(@selector(currentFileName)) context:kCMReceiverResolveFileContext];
 }
 
-//二维码清晰
-- (UIImage *)createNonInterpolatedUIImageFromCIImage:(CIImage *)image WithSize:(CGFloat)size
-{
-    CGRect extent = CGRectIntegral(image.extent);
-    CGFloat scale = MIN(size/CGRectGetWidth(extent), size/CGRectGetHeight(extent));
-    
-    //创建bitmap
-    size_t width = CGRectGetWidth(extent)*scale;
-    size_t height = CGRectGetHeight(extent)*scale;
-    CGColorSpaceRef cs = CGColorSpaceCreateDeviceGray();
-    CGContextRef bitmapRef = CGBitmapContextCreate(nil, width, height, 8, 0, cs, (CGBitmapInfo)kCGImageAlphaNone);
-    CIContext *context = [CIContext contextWithOptions:nil];
-    CGImageRef bitmapImage = [context createCGImage:image fromRect:extent];
-    CGContextSetInterpolationQuality(bitmapRef, kCGInterpolationNone);
-    CGContextScaleCTM(bitmapRef, scale, scale);
-    CGContextDrawImage(bitmapRef, extent, bitmapImage);
-    
-    //保存图片
-    CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);
-    CGContextRelease(bitmapRef);
-    CGImageRelease(bitmapImage);
-    return [UIImage imageWithCGImage:scaledImage];
-}
 
 @end

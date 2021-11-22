@@ -17,9 +17,7 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
-  s.description      = <<-DESC
-TODO: Add long description of the pod here.
-                       DESC
+  s.description      = 'CMDataSync SDK provides easy way to implement file transfer function in app. Now it provide data transfer function based on tcp link'
 
   s.homepage         = 'http://cmic.tools.bigcloudsys.cn/gitlab/mail/iOS/CMDataSync.git'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'

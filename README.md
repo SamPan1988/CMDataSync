@@ -22,7 +22,7 @@ pod 'CMDataSync'
 
 ## Author
 
-panshaosen, 19802021493@139.com
+panshaosen, panshaosen@gmail.com
 
 ## License
 
